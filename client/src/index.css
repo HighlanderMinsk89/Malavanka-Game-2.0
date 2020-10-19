@@ -38,3 +38,8 @@
 .btn-form button {
   margin: 0 0 1em 1em;
 }
+
+/* NAVBAR */
+.brand-logo {
+  margin-left: 1rem;
+}

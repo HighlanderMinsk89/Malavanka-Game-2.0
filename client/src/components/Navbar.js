@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
 
 export const Navbar = () => {
+  const { isAuthenticated, logout } = useContext(AuthContext);
   return (
     <nav>
       <div className="nav-wrapper red darken-2">
@@ -13,7 +15,13 @@ export const Navbar = () => {
             <NavLink to="/scores">Scores</NavLink>
           </li>
           <li>
-            <NavLink to="/auth">Login / Register</NavLink>
+            {isAuthenticated ? (
+              <NavLink to="/" onClick={logout}>
+                Logout
+              </NavLink>
+            ) : (
+              <NavLink to="/auth">Login / Register</NavLink>
+            )}
           </li>
         </ul>
       </div>

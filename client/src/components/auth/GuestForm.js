@@ -1,6 +1,28 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { AuthContext } from "../../context/authContext";
+import { useMessage } from "../../hooks/message.hook";
 
 export const GuestForm = () => {
+  const { login } = useContext(AuthContext);
+  const message = useMessage();
+  const history = useHistory();
+  const [form, setForm] = useState({
+    name: "",
+    location: "",
+  });
+
+  const handleChange = (event) => {
+    setForm({ ...form, [event.target.name]: event.target.value });
+  };
+
+  const handleGuestLogin = () => {
+    if (!form.name.length) {
+      return message("Please enter name");
+    }
+    login(null, null, { ...form });
+    history.push("/game");
+  };
   return (
     <div className="row auth-tile">
       <div className="col s12 m12 card-cont">
@@ -10,20 +32,37 @@ export const GuestForm = () => {
           </div>
           <div className="card-action">
             <div className="input-field ">
-              <input id="name" type="text" />
-              <label for="name" className="white-text">
-                Name
+              <input
+                id="nameG"
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+              />
+              <label htmlFor="nameG" className="white-text">
+                Name *
               </label>
             </div>
             <div className="input-field">
-              <input id="location" type="text" />
-              <label for="location" className="white-text">
+              <input
+                id="locationG"
+                type="text"
+                name="location"
+                value={form.location}
+                onChange={handleChange}
+              />
+              <label htmlFor="locationG" className="white-text">
                 Location
               </label>
             </div>
           </div>
           <div className="btn-form">
-            <button className="btn white black-text waves-effect">Play!</button>
+            <button
+              className="btn white black-text waves-effect"
+              onClick={handleGuestLogin}
+            >
+              Play!
+            </button>
           </div>
         </div>
       </div>

@@ -16,7 +16,7 @@ router.post(
   ],
   async (req, res) => {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password, location } = req.body;
 
       const errors = validationResult(req);
 
@@ -32,14 +32,14 @@ router.post(
       if (candidate)
         return res
           .status(400)
-          .json({ message: "User with such an email already registered" });
+          .json({ message: "User with such an email is already registered" });
 
       const hashedPass = await bcrypt.hash(password, 12);
-      const user = new User({ name, email, password: hashedPass });
+      const user = new User({ name, email, password: hashedPass, location });
 
       await user.save();
 
-      res.status(201).json({ message: "New user has been created" });
+      res.status(201).json({ message: "New user has been created", user });
     } catch (e) {
       res.status(500).json({ message: "Something wrong on server", error: e });
     }
@@ -67,10 +67,12 @@ router.post(
       }
 
       const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ message: "Incorrect email or password" });
+      }
 
-      const isPassMatch = bcrypt.compare(password, user.password);
-
-      if (!user || !isPassMatch) {
+      const isPassMatch = await bcrypt.compare(password, user.password);
+      if (!isPassMatch) {
         return res.status(400).json({ message: "Incorrect email or password" });
       }
 

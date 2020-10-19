@@ -15,9 +15,7 @@ export const useRoutes = (isAuthenticated) => {
       <Route path="/scores" exact>
         <ScoresPage />
       </Route>
-      <Route path="/auth" exact>
-        <AuthPage />
-      </Route>
+
       {isAuthenticated ? (
         <Switch>
           <Route path="/game" exact>
@@ -28,7 +26,11 @@ export const useRoutes = (isAuthenticated) => {
           </Route>
           <Redirect to="/" />
         </Switch>
-      ) : null}
+      ) : (
+        <Route path="/auth" exact>
+          <AuthPage />
+        </Route>
+      )}
       <Redirect to="/" />
     </Switch>
   );
