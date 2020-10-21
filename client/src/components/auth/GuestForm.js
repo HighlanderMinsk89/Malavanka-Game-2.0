@@ -1,64 +1,65 @@
-import React, { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { AuthContext } from "../../context/authContext";
-import { useMessage } from "../../hooks/message.hook";
+import React, { useContext, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { AuthContext } from '../../context/authContext'
+import { useMessage } from '../../hooks/message.hook'
 
 export const GuestForm = () => {
-  const { login } = useContext(AuthContext);
-  const message = useMessage();
-  const history = useHistory();
+  const { login } = useContext(AuthContext)
+  const message = useMessage()
+  const history = useHistory()
   const [form, setForm] = useState({
-    name: "",
-    location: "",
-  });
+    name: '',
+    location: '',
+  })
 
   const handleChange = (event) => {
-    setForm({ ...form, [event.target.name]: event.target.value });
-  };
+    setForm({ ...form, [event.target.name]: event.target.value })
+  }
 
   const handleGuestLogin = () => {
     if (!form.name.length) {
-      return message("Please enter name");
+      return message('Please enter name')
     }
-    login(null, null, { ...form });
-    history.push("/game");
-  };
+    login(null, null, { ...form })
+    history.push('/game')
+  }
+
   return (
-    <div className="row auth-tile">
-      <div className="col s12 m12 card-cont">
-        <div className="card red darken-3">
-          <div className="card-content white-text">
-            <span className="card-title center">Play as Guest</span>
+    <div className='row auth-tile'>
+      <div className='col s12 m12 card-cont'>
+        <div className='card red darken-3'>
+          <div className='card-content white-text'>
+            <span className='card-title center'>Play as Guest</span>
           </div>
-          <div className="card-action">
-            <div className="input-field ">
+          <div className='card-action'>
+            <div className='input-field '>
               <input
-                id="nameG"
-                type="text"
-                name="name"
+                id='nameG'
+                type='text'
+                name='name'
                 value={form.name}
                 onChange={handleChange}
               />
-              <label htmlFor="nameG" className="white-text">
+              <label htmlFor='nameG' className='white-text'>
                 Name *
               </label>
             </div>
-            <div className="input-field">
+            <div className='input-field'>
               <input
-                id="locationG"
-                type="text"
-                name="location"
+                id='locationG'
+                type='text'
+                name='location'
                 value={form.location}
                 onChange={handleChange}
               />
-              <label htmlFor="locationG" className="white-text">
+              <label htmlFor='locationG' className='white-text'>
                 Location
               </label>
             </div>
           </div>
-          <div className="btn-form">
+          <div className='btn-form'>
             <button
-              className="btn white black-text waves-effect"
+              className='btn white black-text waves-effect'
               onClick={handleGuestLogin}
             >
               Play!
@@ -67,5 +68,5 @@ export const GuestForm = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

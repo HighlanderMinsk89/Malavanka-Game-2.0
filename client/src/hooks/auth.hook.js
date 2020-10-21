@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-const localStorageData = "userData";
+const localStorageData = "userDataMalavanka";
 
 export const useAuth = () => {
   const [token, setToken] = useState(null);
@@ -22,8 +22,9 @@ export const useAuth = () => {
     setUserId(null);
     setGuest(false);
     localStorage.removeItem(localStorageData);
-    console.log("token", token);
   }, []);
+
+
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem(localStorageData));
