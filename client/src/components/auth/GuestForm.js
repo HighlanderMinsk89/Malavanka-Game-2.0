@@ -17,9 +17,7 @@ export const GuestForm = () => {
   }
 
   const handleGuestLogin = () => {
-    if (!form.name.length) {
-      return message('Please enter name')
-    }
+    if (!form.name.length) message('Please enter name')
     login(null, null, { ...form })
     history.push('/game')
   }
