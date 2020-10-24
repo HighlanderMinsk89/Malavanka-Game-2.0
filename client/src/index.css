@@ -43,3 +43,58 @@
 .brand-logo {
   margin-left: 1rem;
 }
+
+
+/* CHAT */
+
+.chat-box {
+  background-color: azure;
+  border: 2px solid rgb(85, 42, 165) ;
+  width: 100%;
+  height: 200px;
+  margin-right: 1rem;
+}
+
+/* ROOMS LIST */
+.rooms-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.room-row-cont {
+  border-radius: 5px;
+  box-shadow:2px 2px 2px rgb(63, 59, 59);
+  width: 70%;
+  background-color: rgb(238, 238, 238);
+  margin: 1rem;
+}
+
+.room-row-cont img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid black;
+  align-self: center;
+  margin: 1rem;
+}
+
+.room-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.room-row-info {
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.room-row h5 {
+align-self: center;
+}
+
+.room-row-info div {
+  margin-bottom: 0.5rem;
+}

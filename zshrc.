@@ -1,1 +1,0 @@
-PATH=$(echo "$PATH" | sed -e 's/:\/mnt.*//g') # strip out problematic Windows %PATH%export PATH="$PATH:/usr/local/share/npm/bin"

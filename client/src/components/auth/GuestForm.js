@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import randomCryptoId from 'crypto-random-string'
 import { useHistory } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
 import { useMessage } from '../../hooks/message.hook'
@@ -18,8 +19,11 @@ export const GuestForm = () => {
 
   const handleGuestLogin = () => {
     if (!form.name.length) message('Please enter name')
-    login(null, null, { ...form })
-    history.push('/game')
+    login(null, null, {
+      ...form,
+      guestId: randomCryptoId({ length: 25, type: 'base64' }),
+    })
+    history.push('/selectroom')
   }
 
   return (

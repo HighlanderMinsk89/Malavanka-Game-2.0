@@ -4,6 +4,7 @@ import { AuthPage } from './pages/AuthPage'
 import { GamePage } from './pages/GamePage'
 import { GameResultsPage } from './pages/GameResultsPage'
 import { HomePage } from './pages/HomePage'
+import { RoomsPage } from './pages/RoomsPage'
 import { ScoresPage } from './pages/ScoresPage'
 
 export const useRoutes = (isAuthenticated) => {
@@ -23,6 +24,9 @@ export const useRoutes = (isAuthenticated) => {
           </Route>
           <Route path='/results' exact>
             <GameResultsPage />
+          </Route>
+          <Route path='/selectroom' exact>
+            <RoomsPage />
           </Route>
           <Redirect to='/' />
         </Switch>

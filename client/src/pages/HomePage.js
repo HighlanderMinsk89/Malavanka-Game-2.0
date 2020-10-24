@@ -10,7 +10,9 @@ export const HomePage = () => {
       <h1>Welcome to Malavanka</h1>
       <button
         className='btn btn-large red'
-        onClick={() => history.push(`${isAuthenticated ? '/game' : '/auth'}`)}
+        onClick={() =>
+          history.push(`${isAuthenticated ? '/selectroom' : '/auth'}`)
+        }
       >
         Гуляць
       </button>

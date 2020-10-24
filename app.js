@@ -3,6 +3,7 @@ const http = require('http')
 const config = require('config')
 const mongoose = require('mongoose')
 const socket = require('socket.io')
+const socketConsumer = require('./socket')
 
 const app = express()
 const httpServer = http.createServer(app)
@@ -11,6 +12,7 @@ const io = socket(httpServer)
 app.use(express.json({ extended: true }))
 
 app.use('/api/auth', require('./routes/auth.routes'))
+app.use('/api/room', require('./routes/room.routes'))
 
 // if (process.env.NODE_ENV === "production") {
 //   app.use("/", express.static(path.join(__dirname, "client", "build")));
@@ -20,8 +22,9 @@ app.use('/api/auth', require('./routes/auth.routes'))
 //   });
 // }
 
-const PORT = config.get('port') || 5000
-const httpPORT = config.get('httpPORT') || 8000
+const httpPORT = config.get('httpPORT') || 5000
+
+socketConsumer.start(io)
 
 async function start() {
   try {
@@ -30,7 +33,6 @@ async function start() {
       useUnifiedTopology: true,
       useCreateIndex: true,
     })
-    app.listen(PORT, () => console.log(`App has been started on port ${PORT}`))
     httpServer.listen(httpPORT, () =>
       console.log(`Http server is running on ${httpPORT}`)
     )
@@ -41,3 +43,5 @@ async function start() {
 }
 
 start()
+
+module.exports = httpServer
