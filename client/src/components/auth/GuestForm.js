@@ -19,10 +19,14 @@ export const GuestForm = () => {
 
   const handleGuestLogin = () => {
     if (!form.name.length) message('Please enter name')
-    login(null, null, {
-      ...form,
-      guestId: randomCryptoId({ length: 25, type: 'base64' }),
-    })
+    login(
+      null,
+      null,
+      form.name,
+      form.location,
+      randomCryptoId({ length: 25, type: 'base64' })
+    )
+
     history.push('/selectroom')
   }
 

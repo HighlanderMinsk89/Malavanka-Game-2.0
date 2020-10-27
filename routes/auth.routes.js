@@ -89,6 +89,8 @@ router.post(
       res.json({
         token,
         userId: user.id,
+        userName: user.name,
+        location: user.location,
         message: `${user.name} successfully logged in`,
       })
     } catch (e) {

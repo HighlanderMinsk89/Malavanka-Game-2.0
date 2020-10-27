@@ -20,7 +20,12 @@ export const LoginForm = () => {
     const response = await request('/api/auth/login', 'post', { ...form })
 
     if (response) {
-      auth.login(response.token, response.userId)
+      auth.login(
+        response.token,
+        response.userId,
+        response.userName,
+        response.location
+      )
       history.push('/selectroom')
     }
   }

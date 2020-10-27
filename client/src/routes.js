@@ -1,7 +1,7 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { AuthPage } from './pages/AuthPage'
-import { GamePage } from './pages/GamePage'
+import { RoomPage } from './pages/RoomPage'
 import { GameResultsPage } from './pages/GameResultsPage'
 import { HomePage } from './pages/HomePage'
 import { RoomsPage } from './pages/RoomsPage'
@@ -19,8 +19,8 @@ export const useRoutes = (isAuthenticated) => {
 
       {isAuthenticated ? (
         <Switch>
-          <Route path='/game' exact>
-            <GamePage />
+          <Route path='/room/:id' exact>
+            <RoomPage />
           </Route>
           <Route path='/results' exact>
             <GameResultsPage />

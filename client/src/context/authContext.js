@@ -1,12 +1,14 @@
-import { createContext } from "react";
+import { createContext } from 'react'
 
 function noop() {}
 
 export const AuthContext = createContext({
   token: null,
   userId: null,
-  guest: false,
+  userName: null,
+  guestId: null,
+  location: null,
   login: noop,
   logout: noop,
   isAuthenticated: false,
-});
+})

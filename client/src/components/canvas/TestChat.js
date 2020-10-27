@@ -1,10 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
 import io from 'socket.io-client'
+import { useHttp } from '../../hooks/http.hook'
+import { Loader } from '../Loader'
 
 export const TestChat = () => {
+  const location = useLocation()
+  const { loading, request } = useHttp()
   const [yourId, setYourId] = useState(null)
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
+  const [users, setUsers] = useState([])
 
   const socketRef = useRef()
 
@@ -17,7 +23,7 @@ export const TestChat = () => {
     })
 
     socketRef.current.on('message', (message) => {
-      setMessages(prevMess => [...prevMess, message])
+      setMessages((prevMess) => [...prevMess, message])
     })
   }, [setYourId, setMessages])
 
@@ -28,11 +34,34 @@ export const TestChat = () => {
   const handleSendMessage = () => {
     const body = {
       message,
-      id: yourId
+      id: yourId,
     }
     socketRef.current.emit('send message', body)
     setMessage('')
   }
+
+  const getListOfUsers = useCallback(
+    async (roomId) => {
+      try {
+        const users = await request(`/api/room/${roomId}`, 'get')
+        setUsers(users)
+      } catch (e) {}
+    },
+    [request]
+  )
+
+  const { id } = useParams()
+
+  useEffect(() => {
+    getListOfUsers(id)
+  }, [id, getListOfUsers])
+
+  useEffect(() => {
+    console.log('Playing')
+    //TO TRY CLEANUP TO DELETE USER
+  }, [location])
+
+  if (loading) return <Loader />
   return (
     <div>
       <h1>Chat</h1>
@@ -40,14 +69,16 @@ export const TestChat = () => {
         <div className='chat-box'>
           {messages.map((body, index) => {
             return (
-            <h6 key={index}>{body.message} <span>{body.id}</span></h6>
+              <h6 key={index}>
+                {body.message} <span>{body.id}</span>
+              </h6>
             )
           })}
         </div>
         <div className='chat-form'>
           <input
             value={message}
-            type="text"
+            type='text'
             placeholder='Say something'
             onChange={handleFormChange}
           />
@@ -55,6 +86,17 @@ export const TestChat = () => {
             Send
           </button>
         </div>
+      </div>
+      <div>
+        <ul>
+          {users.map((user, idx) => {
+            return (
+              <li key={idx}>
+                {user.userName} / {user.location}
+              </li>
+            )
+          })}
+        </ul>
       </div>
     </div>
   )
