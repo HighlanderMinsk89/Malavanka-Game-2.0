@@ -1,57 +1,80 @@
-import React from 'react'
-import CanvasDraw from 'react-canvas-draw'
+import React, { useState, useRef, useEffect } from 'react'
+import { EditDrawTools } from './EditDrawTools'
 
 export const CanvasMain = () => {
-  //   const [isDrawing, setIsDrawing] = useState(false)
+  const [isDrawing, setIsDrawing] = useState(false)
 
-  //   const canvasRef = useRef(null)
-  //   const contextRef = useRef(null)
+  const canvasRef = useRef(null)
+  const contextRef = useRef(null)
 
-  //   useEffect(() => {
-  //     const canvas = canvasRef.current
+  const changeColor = (color) => {
+    contextRef.current.strokeStyle = color
+  }
 
-  //     canvas.width = window.innerWidth
-  //     console.log('canvas.width', canvas.width)
-  //     canvas.height = window.innerHeight
-  //     canvas.style.width = `${window.innerWidth / 2}px`
-  //     canvas.style.height = `${window.innerHeight / 2}px`
-  //     canvas.style.backgroundColor = 'black'
+  const changeLineWeight = (weight) => {
+    contextRef.current.lineWidth = weight
+  }
 
-  //     const context = canvas.getContext('2d')
-  //     // context.scale(0.5, 0.5)
-  //     context.lineCap = 'round'
-  //     context.strokeStyle = 'red'
-  //     context.lineWidth = 2
+  const clearCanvas = () => {
+    contextRef.current.clearRect(
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height
+    )
+  }
 
-  //     contextRef.current = context
-  //   }, [])
+  useEffect(() => {
+    const canvas = canvasRef.current
 
-  //   const startDrawing = ({ nativeEvent }) => {
-  //     const { offsetX, offsetY } = nativeEvent
-  //     contextRef.current.beginPath()
-  //     contextRef.current.moveTo(offsetX, offsetY)
-  //     setIsDrawing(true)
-  //   }
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    canvas.style.width = `${window.innerWidth / 2}px`
+    canvas.style.height = `${window.innerHeight / 2}px`
+    canvas.style.backgroundColor = 'black'
 
-  //   const finishDrawing = () => {
-  //     setIsDrawing(false)
-  //     contextRef.current.closePath()
-  //   }
+    const context = canvas.getContext('2d')
+    // context.scale(1, 1)
+    context.lineCap = 'round'
+    context.strokeStyle = 'red'
+    context.lineWidth = 4
 
-  //   const draw = ({ nativeEvent }) => {
-  //     if (!isDrawing) return
-  //     const { offsetX, offsetY } = nativeEvent
-  //     contextRef.current.lineTo(offsetX, offsetY)
-  //     contextRef.current.stroke()
-  //   }
+    contextRef.current = context
+  }, [])
 
-  //   return (
-  //     <canvas
-  //       onMouseDown={startDrawing}
-  //       onMouseUp={finishDrawing}
-  //       onMouseMove={draw}
-  //       ref={canvasRef}
-  //     />
-  //   )
-  return <CanvasDraw brushColor={'black'} canvasWidth={'50rem'} />
+  const startDrawing = (e) => {
+    const { offsetX, offsetY } = e.nativeEvent
+    contextRef.current.beginPath()
+    contextRef.current.moveTo(offsetX * 2, offsetY * 2)
+    setIsDrawing(true)
+  }
+
+  const finishDrawing = () => {
+    setIsDrawing(false)
+    contextRef.current.closePath()
+  }
+
+  const draw = (e) => {
+    if (!isDrawing) return
+    const { offsetX, offsetY } = e.nativeEvent
+    contextRef.current.lineTo(offsetX * 2, offsetY * 2)
+    contextRef.current.stroke()
+  }
+
+  return (
+    <div className='canvas-cont'>
+      <EditDrawTools
+        width={`${window.innerWidth / 2}px`}
+        changeColor={changeColor}
+        changeLineWeight={changeLineWeight}
+        clearCanvas={clearCanvas}
+      />
+      <canvas
+        onMouseDown={startDrawing}
+        onMouseUp={finishDrawing}
+        onMouseMove={draw}
+        ref={canvasRef}
+      />
+    </div>
+  )
 }

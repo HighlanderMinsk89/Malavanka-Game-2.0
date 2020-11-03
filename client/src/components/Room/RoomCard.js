@@ -1,20 +1,13 @@
-import React, { useContext } from 'react'
+import React from 'react'
+
 import { useHistory } from 'react-router-dom'
-import { AuthContext } from '../../context/authContext'
 import { useHttp } from '../../hooks/http.hook'
+
 import { Loader } from '../Loader'
 
-export const RoomCard = ({ room }) => {
+export const RoomCard = ({ room, capacity }) => {
   const history = useHistory()
-  const { userName, userId, location, guestId } = useContext(AuthContext)
-  const { request, loading } = useHttp()
-
-  const handeleJoin = async (id) => {
-    const user = { userName, userId, location, guestId }
-    const response = await request(`/api/room/${id}/adduser`, 'post', user)
-    if (response) history.push(`/room/${id}`)
-  }
-
+  const { loading } = useHttp()
   if (loading) return <Loader />
 
   return (
@@ -28,10 +21,12 @@ export const RoomCard = ({ room }) => {
         <h5>{room.roomName}</h5>
 
         <div className='room-row-info'>
-          <div>{room.users.length} users online</div>
+          <div>
+            {capacity} {`user${capacity === 1 ? '' : 's'} online`}
+          </div>
           <button
             className='btn green darken-3'
-            onClick={() => handeleJoin(room._id)}
+            onClick={() => history.push(`/room/${room._id}`)}
           >
             Join
           </button>

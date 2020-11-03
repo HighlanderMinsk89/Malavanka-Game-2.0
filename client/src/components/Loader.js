@@ -12,7 +12,7 @@ export const Loader = () => {
       }}
     >
       <div className='progress black darken-1'>
-        <div className='indeterminate green'></div>
+        <div className='indeterminate green'/>
       </div>
     </div>
   )

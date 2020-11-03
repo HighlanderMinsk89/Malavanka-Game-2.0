@@ -1,4 +1,9 @@
+.container {
+  width: 85%;
+}
+
 /* AUTH FORMS */
+
 
 .forms-cont {
   display: flex;
@@ -45,14 +50,32 @@
 }
 
 
+/* _________________ROOM */
+.room-cont {
+  display: flex;
+  justify-content: space-between;
+}
+
+
 /* CHAT */
+
+.chat-container {
+  display: flex;
+  flex-grow: 1;
+  margin-left: 2rem;
+  flex-direction: column;
+  width: inherit;
+  max-width: inherit;
+  height: calc(50vh + 1rem + 40px);
+}
 
 .chat-box {
   background-color: azure;
   border: 2px solid rgb(85, 42, 165) ;
-  width: 100%;
+  width: inherit;
   height: 200px;
   margin-right: 1rem;
+  flex-grow: 1;
 }
 
 /* ROOMS LIST */
@@ -97,4 +120,57 @@ align-self: center;
 
 .room-row-info div {
   margin-bottom: 0.5rem;
+}
+
+/* CANVAS_________ */
+.canvas-cont {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-draw-cont {
+  display: flex;
+  justify-content: space-around;
+  /* background-color: cadetblue; */
+  height: 40px;
+  margin: 0 0 1rem 0;
+}
+
+.edit-colors {
+  display: flex;
+  width: 60%;
+}
+
+.edit-line {
+display: flex;
+width: 40%;
+}
+
+.color-picker {
+  height: 100%;
+  width: 12%;
+  border: 2px solid black;
+  margin-right: 0.2rem;
+  border-radius: 10%;
+}
+
+.line-picker {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 18%;
+  background-color: rgb(255, 255, 255);
+  border: 2px solid black;
+  margin-left: 0.2rem;
+  border-radius: 10%
+}
+
+.line-picker-dot {
+  background-color: black;
+  border-radius: 50%;
+  align-self: center;
+}
+
+.color-selected {
+  box-shadow: 0 4px 8px 0 rgba(255, 0, 0, 0.795), 0 6px 20px 0 rgba(223, 0, 0, 0.788);
 }
