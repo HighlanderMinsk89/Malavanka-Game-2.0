@@ -1,36 +1,34 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
-import { useSocketIO } from '../../hooks/useSocketIO'
 
-export const Chat = () => {
+export const Chat = ({ socket }) => {
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
-  const { socketRef, yourId } = useSocketIO()
 
-  const { userName, userId, location } = useContext(AuthContext)
+  const { userName, location } = useContext(AuthContext)
   const { roomid } = useParams()
 
   useEffect(() => {
-    const socketRefCopy = socketRef.current
-    socketRef.current.on('welcomeMessage', (message) => {
+    const socketCopy = socket
+
+    socket.on('welcomeMessage', (message) => {
       const editedM = { message: `${message}, ${userName}!` }
       setMessages((prevMess) => [...prevMess, editedM])
     })
     //userJoined
-    socketRef.current.emit('userJoined', { userName, location, roomid })
-    socketRef.current.on('userJoinedMessage', (message) => {
+    socket.on('userJoinedMessage', (message) => {
       setMessages((prevMess) => [...prevMess, { message }])
     })
 
-    socketRef.current.on('message', (message) => {
+    socket.on('message', (message) => {
       setMessages((prevMess) => [...prevMess, message])
     })
 
     return () => {
-      socketRefCopy.removeAllListeners()
+      socketCopy.removeAllListeners()
     }
-  }, [setMessages, userName, socketRef, location, roomid])
+  }, [setMessages, userName, socket, location, roomid])
 
   const handleFormChange = (e) => {
     setMessage(e.target.value)
@@ -39,12 +37,12 @@ export const Chat = () => {
   const handleSendMessage = () => {
     const body = {
       message,
-      id: yourId,
       location,
       roomid,
       userName,
     }
-    socketRef.current.emit('send message', body)
+    socket.emit('send message', body)
+
     setMessage('')
   }
 
@@ -52,11 +50,7 @@ export const Chat = () => {
     <div className='chat-container'>
       <div className='chat-box'>
         {messages.map((body, index) => {
-          return (
-            <h6 key={index}>
-              {body.message} <span>{body.id}</span>
-            </h6>
-          )
+          return <h6 key={index}>{body.message}</h6>
         })}
       </div>
       <div className='chat-form'>

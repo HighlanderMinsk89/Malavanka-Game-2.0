@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { EditDrawTools } from './EditDrawTools'
 
-export const CanvasMain = () => {
+export const CanvasMain = ({ socket }) => {
   const [isDrawing, setIsDrawing] = useState(false)
+  const { roomid } = useParams()
 
   const canvasRef = useRef(null)
   const contextRef = useRef(null)
@@ -25,6 +27,24 @@ export const CanvasMain = () => {
   }
 
   useEffect(() => {
+    socket.on('startDrawingCli', ({ offsetX, offsetY }) => {
+      contextRef.current.beginPath()
+      contextRef.current.moveTo(offsetX * 2, offsetY * 2)
+      setIsDrawing(true)
+    })
+
+    socket.on('finishDrawingCli', () => {
+      setIsDrawing(false)
+      contextRef.current.closePath()
+    })
+
+    socket.on('drawCli', ({ offsetX, offsetY }) => {
+      contextRef.current.lineTo(offsetX * 2, offsetY * 2)
+      contextRef.current.stroke()
+    })
+  }, [socket])
+
+  useEffect(() => {
     const canvas = canvasRef.current
 
     canvas.width = window.innerWidth
@@ -34,7 +54,7 @@ export const CanvasMain = () => {
     canvas.style.backgroundColor = 'black'
 
     const context = canvas.getContext('2d')
-    // context.scale(1, 1)
+    // context.scale(1.5, 1.5)
     context.lineCap = 'round'
     context.strokeStyle = 'red'
     context.lineWidth = 4
@@ -47,11 +67,19 @@ export const CanvasMain = () => {
     contextRef.current.beginPath()
     contextRef.current.moveTo(offsetX * 2, offsetY * 2)
     setIsDrawing(true)
+
+    socket.emit('startDrawing', {
+      roomid,
+      offsetX,
+      offsetY,
+    })
   }
 
   const finishDrawing = () => {
     setIsDrawing(false)
     contextRef.current.closePath()
+
+    socket.emit('finishDrawing', { roomid })
   }
 
   const draw = (e) => {
@@ -59,10 +87,16 @@ export const CanvasMain = () => {
     const { offsetX, offsetY } = e.nativeEvent
     contextRef.current.lineTo(offsetX * 2, offsetY * 2)
     contextRef.current.stroke()
+
+    socket.emit('draw', { offsetX, offsetY, roomid })
+  }
+
+  const onResize = () => {
+    //TODO:
   }
 
   return (
-    <div className='canvas-cont'>
+    <div className='canvas-cont' {...onResize}>
       <EditDrawTools
         width={`${window.innerWidth / 2}px`}
         changeColor={changeColor}

@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useHttp } from '../hooks/http.hook'
 import { Loader } from '../components/Loader'
 import { RoomCard } from '../components/Room/RoomCard'
-import { useSocketIO } from '../hooks/useSocketIO'
+import { SocketContext } from '../context/socketContext'
 
 export const RoomsPage = () => {
   const { request, loading } = useHttp()
   const [rooms, setRooms] = useState([])
   const [roomsCapacity, setRoomsCapacity] = useState({})
-  const { socketRef } = useSocketIO()
+  const { socket } = useContext(SocketContext)
 
   const fetchRooms = useCallback(async () => {
     try {
@@ -21,24 +21,24 @@ export const RoomsPage = () => {
     fetchRooms()
   }, [fetchRooms])
 
-  const setCapacityCB = rooms => {
+  const setCapacityCB = (rooms) => {
     setRoomsCapacity(rooms)
   }
 
   useEffect(() => {
-    socketRef.current.on('roomsCapacity', setCapacityCB)
-    socketRef.current.emit('getRoomCapacity')
+    socket.on('roomsCapacity', setCapacityCB)
+    socket.emit('getRoomCapacity')
     const interval = setInterval(() => {
-      socketRef.current.emit('getRoomCapacity')
+      socket.emit('getRoomCapacity')
     }, 10000)
 
-    const socketRefCopy = socketRef.current
+    const socketCopy = socket
 
     return () => {
       clearInterval(interval)
-      socketRefCopy.off('roomsCapacity', setCapacityCB)
+      socketCopy.off('roomsCapacity', setCapacityCB)
     }
-  }, [socketRef])
+  }, [socket])
 
   if (loading) {
     return <Loader />
