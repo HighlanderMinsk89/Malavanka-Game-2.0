@@ -1,4 +1,4 @@
-const roomsCapacity = {}
+const roomsAndUsers = {}
 
 module.exports = {
   start: (io) => {
@@ -7,28 +7,41 @@ module.exports = {
         socket.emit('your id', socket.id)
       })
 
-      socket.on('userJoined', ({ userName, location, roomid }) => {
+      socket.on('userJoined', ({ userName, location, roomid, socketId }) => {
         socket.join(roomid)
+        socket.roomJoined = roomid
         socket.emit('welcomeMessage', 'Welcome to the chat')
-        console.log('USER JOINED', userName, roomid)
-        socket.room = roomid
-        roomsCapacity[roomid] === undefined
-          ? (roomsCapacity[roomid] = 1)
-          : roomsCapacity[roomid]++
-        console.log('roomsCapacity', roomsCapacity)
+
+        const newSocketUser = { [socketId]: { userName, location } }
+        if (!roomsAndUsers[roomid]) {
+          roomsAndUsers[roomid] = [newSocketUser]
+        } else {
+          roomsAndUsers[roomid].push(newSocketUser)
+        }
 
         socket.broadcast
           .to(roomid)
           .emit('userJoinedMessage', `${userName} has joined the chat`)
+
+        io.to(roomid).emit(
+          'usersRoomUpdate',
+          getUsersInRoom(roomsAndUsers, roomid)
+        )
       })
 
       socket.on('getRoomCapacity', () => {
-        socket.emit('roomsCapacity', roomsCapacity)
+        socket.emit('roomsAndUsers', roomsAndUsers)
       })
 
       socket.on('send message', (body) => {
         io.to(body.roomid).emit('message', body)
       })
+
+      // socket.on('getRoomUsers', (roomid) => {
+      //   const users = getUsersInRoom(roomsAndUsers, roomid)
+      //   console.log('users', users)
+      //   socket.emit('usersInRoom', users)
+      // })
 
       //drawing
       socket.on('startDrawing', ({ offsetX, offsetY, roomid }) => {
@@ -45,14 +58,61 @@ module.exports = {
         socket.broadcast.to(roomid).emit('drawCli', { offsetX, offsetY })
       })
 
+      socket.on('colorChange', ({ newColor, roomid }) => {
+        socket.broadcast.to(roomid).emit('colorChangeCli', { newColor })
+      })
+
+      socket.on('lineChange', ({ newLine, roomid }) => {
+        socket.broadcast.to(roomid).emit('lineChangeCli', { newLine })
+      })
+
+      socket.on('clearCanvas', ({ roomid }) => {
+        socket.broadcast.to(roomid).emit('clearCanvasCli')
+      })
+
       //
 
+      socket.on('leftRoom', ({ roomid }) => {
+        socket.roomJoined = null
+        socket.leave(roomid, () => {
+          if (roomsAndUsers[roomid]) {
+            onSocketLeavesRoomOrDisconnect(socket.id, roomid, roomsAndUsers)
+            io.to(roomid).emit(
+              'usersRoomUpdate',
+              getUsersInRoom(roomsAndUsers, roomid)
+            )
+          }
+        })
+      })
+
       socket.on('disconnect', () => {
-        roomsCapacity[socket.room]--
-        console.log('user has left the room -->', socket.room)
-        console.log(roomsCapacity)
-        io.emit('message', 'User has left the chat')
+        if (socket.roomJoined) {
+          onSocketLeavesRoomOrDisconnect(
+            socket.id,
+            socket.roomJoined,
+            roomsAndUsers
+          )
+          io.to(socket.roomJoined).emit(
+            'usersRoomUpdate',
+            getUsersInRoom(roomsAndUsers, socket.roomJoined)
+          )
+          socket.roomJoined = null
+        }
       })
     })
   },
+}
+
+function onSocketLeavesRoomOrDisconnect(socketId, room, roomsAndUsersObj) {
+  if (roomsAndUsers[room]) {
+    roomsAndUsersObj[room] = roomsAndUsersObj[room].filter((user) => {
+      return Object.keys(user)[0] !== socketId
+    })
+  }
+}
+
+function getUsersInRoom(roomsAndUsersObj, room) {
+  if (roomsAndUsers[room]) {
+    return roomsAndUsersObj[room].map((socket) => Object.values(socket)[0])
+  }
 }

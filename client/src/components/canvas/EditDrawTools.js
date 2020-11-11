@@ -1,26 +1,34 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 const colors = ['red', 'purple', 'green', 'yellow', 'blue', 'brown', 'white']
-const lineWeight = [4, 10, 16, 24, 30]
+const lineWeight = [4, 10, 18, 28, 36]
 
 export const EditDrawTools = ({
   width,
+  setColorSelected,
+  setLineSelected,
   changeColor,
   changeLineWeight,
   clearCanvas,
+  socket,
+  roomid,
+  colorSelected,
+  lineSelected,
 }) => {
-  const [colorSelected, setColorSelected] = useState('red')
-  const [lineSelected, setLineSelected] = useState(4)
-
   const onColorChange = (e) => {
-    setColorSelected(e.target.getAttribute('color'))
-    changeColor(e.target.getAttribute('color'))
+    const newColor = e.target.getAttribute('color')
+    setColorSelected(newColor)
+    changeColor(newColor)
+    socket.emit('colorChange', { newColor, roomid })
   }
 
   const onLineChange = (e) => {
-    setLineSelected(+e.target.getAttribute('lineweight'))
-    changeLineWeight(+e.target.getAttribute('lineweight'))
+    const newLine = +e.target.getAttribute('lineweight')
+    setLineSelected(newLine)
+    changeLineWeight(newLine)
+    socket.emit('lineChange', { newLine, roomid })
   }
+
   return (
     <div className='edit-draw-cont' style={{ width }}>
       <div className='edit-colors'>
@@ -60,7 +68,7 @@ export const EditDrawTools = ({
         })}
       </div>
       <button
-        onClick={clearCanvas}
+        onClick={() => clearCanvas(true)}
         className='btn btn-small waves-effect waves-light red'
         style={{ marginLeft: '1rem', height: '100%' }}
       >

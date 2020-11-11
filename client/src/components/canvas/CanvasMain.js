@@ -4,10 +4,13 @@ import { EditDrawTools } from './EditDrawTools'
 
 export const CanvasMain = ({ socket }) => {
   const [isDrawing, setIsDrawing] = useState(false)
+  const [colorSelected, setColorSelected] = useState('red')
+  const [lineSelected, setLineSelected] = useState(4)
   const { roomid } = useParams()
 
   const canvasRef = useRef(null)
   const contextRef = useRef(null)
+  const socketRef = useRef(socket)
 
   const changeColor = (color) => {
     contextRef.current.strokeStyle = color
@@ -17,32 +20,47 @@ export const CanvasMain = ({ socket }) => {
     contextRef.current.lineWidth = weight
   }
 
-  const clearCanvas = () => {
+  const clearCanvas = (withEmit) => {
     contextRef.current.clearRect(
       0,
       0,
       canvasRef.current.width,
       canvasRef.current.height
     )
+    if (withEmit) socket.emit('clearCanvas', { roomid })
   }
 
   useEffect(() => {
-    socket.on('startDrawingCli', ({ offsetX, offsetY }) => {
+    socketRef.current.on('startDrawingCli', ({ offsetX, offsetY }) => {
       contextRef.current.beginPath()
       contextRef.current.moveTo(offsetX * 2, offsetY * 2)
       setIsDrawing(true)
     })
 
-    socket.on('finishDrawingCli', () => {
+    socketRef.current.on('finishDrawingCli', () => {
       setIsDrawing(false)
       contextRef.current.closePath()
     })
 
-    socket.on('drawCli', ({ offsetX, offsetY }) => {
+    socketRef.current.on('drawCli', ({ offsetX, offsetY }) => {
       contextRef.current.lineTo(offsetX * 2, offsetY * 2)
       contextRef.current.stroke()
     })
-  }, [socket])
+
+    socketRef.current.on('clearCanvasCli', () => {
+      clearCanvas(false)
+    })
+
+    socketRef.current.on('colorChangeCli', ({ newColor }) => {
+      changeColor(newColor)
+      setColorSelected(newColor)
+    })
+
+    socketRef.current.on('lineChangeCli', ({ newLine }) => {
+      changeLineWeight(newLine)
+      setLineSelected(newLine)
+    })
+  })
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -56,8 +74,8 @@ export const CanvasMain = ({ socket }) => {
     const context = canvas.getContext('2d')
     // context.scale(1.5, 1.5)
     context.lineCap = 'round'
-    context.strokeStyle = 'red'
-    context.lineWidth = 4
+    context.strokeStyle = colorSelected
+    context.lineWidth = lineSelected
 
     contextRef.current = context
   }, [])
@@ -102,6 +120,12 @@ export const CanvasMain = ({ socket }) => {
         changeColor={changeColor}
         changeLineWeight={changeLineWeight}
         clearCanvas={clearCanvas}
+        socket={socket}
+        roomid={roomid}
+        setLineSelected={setLineSelected}
+        setColorSelected={setColorSelected}
+        lineSelected={lineSelected}
+        colorSelected={colorSelected}
       />
       <canvas
         onMouseDown={startDrawing}

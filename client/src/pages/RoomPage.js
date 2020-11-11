@@ -11,8 +11,20 @@ export const RoomPage = () => {
   const { roomid } = useParams()
 
   useEffect(() => {
-    socket.emit('userJoined', { userName, location, roomid })
+    socket.emit('userJoined', {
+      userName,
+      location,
+      roomid,
+      socketId: socket.id,
+    })
   }, [socket, userName, location, roomid])
+
+  useEffect(() => {
+    const socketCopy = socket
+    return () => {
+      socketCopy.emit('leftRoom', { roomid })
+    }
+  })
 
   return (
     <div>

@@ -26,17 +26,17 @@ export const RoomsPage = () => {
   }
 
   useEffect(() => {
-    socket.on('roomsCapacity', setCapacityCB)
+    socket.on('roomsAndUsers', setCapacityCB)
     socket.emit('getRoomCapacity')
     const interval = setInterval(() => {
       socket.emit('getRoomCapacity')
-    }, 10000)
+    }, 3000)
 
     const socketCopy = socket
 
     return () => {
       clearInterval(interval)
-      socketCopy.off('roomsCapacity', setCapacityCB)
+      socketCopy.removeAllListeners()
     }
   }, [socket])
 
@@ -52,7 +52,9 @@ export const RoomsPage = () => {
           <RoomCard
             key={room._id}
             room={room}
-            capacity={roomsCapacity[room._id] || 0}
+            capacity={
+              (roomsCapacity[room._id] && roomsCapacity[room._id].length) || 0
+            }
           />
         ))}
       </ul>
