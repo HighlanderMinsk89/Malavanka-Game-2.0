@@ -4,6 +4,7 @@ import { AuthContext } from '../context/authContext'
 
 export const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext)
+
   return (
     <nav>
       <div className='nav-wrapper red darken-2'>

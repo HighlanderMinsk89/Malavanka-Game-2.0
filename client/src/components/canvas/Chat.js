@@ -2,13 +2,18 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
 
-export const Chat = ({ socket }) => {
+export const Chat = ({ socket, gameState }) => {
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
   const [users, setUsers] = useState([])
 
   const { userName, location } = useContext(AuthContext)
   const { roomid } = useParams()
+
+  let yourTurn
+  if (gameState.activeUser) {
+    yourTurn = socket.id === Object.keys(gameState.activeUser)[0]
+  }
 
   useEffect(() => {
     const socketCopy = socket
@@ -45,8 +50,10 @@ export const Chat = ({ socket }) => {
   }
 
   const handleSendMessage = () => {
+    let input = message
+    if (input === gameState.word) input = 'HUI VAM'
     const body = {
-      message,
+      message: input,
       location,
       roomid,
       userName,
@@ -80,12 +87,17 @@ export const Chat = ({ socket }) => {
       </div>
       <div className='chat-form'>
         <input
+          disabled={yourTurn}
           value={message}
           type='text'
           placeholder='Say something'
           onChange={handleFormChange}
         />
-        <button className='btn is-success' onClick={handleSendMessage}>
+        <button
+          disabled={yourTurn}
+          className='btn is-success'
+          onClick={handleSendMessage}
+        >
           Send
         </button>
       </div>

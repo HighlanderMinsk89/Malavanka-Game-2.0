@@ -43,7 +43,7 @@ function App() {
       <SocketContext.Provider value={{ socket, yourId }}>
         <Router>
           <Navbar />
-          <div className='container'>{routes}</div>
+          <div>{routes}</div>
         </Router>
       </SocketContext.Provider>
     </AuthContext.Provider>

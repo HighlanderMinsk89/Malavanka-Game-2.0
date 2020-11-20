@@ -6,7 +6,6 @@ import { GameResultsPage } from './pages/GameResultsPage'
 import { HomePage } from './pages/HomePage'
 import { RoomsPage } from './pages/RoomsPage'
 import { ScoresPage } from './pages/ScoresPage'
-import { CanvasMain } from './components/canvas/CanvasMain'
 
 export const useRoutes = (isAuthenticated) => {
   return (
@@ -15,7 +14,7 @@ export const useRoutes = (isAuthenticated) => {
         <HomePage />
       </Route>
       <Route path='/scores' exact>
-        <CanvasMain />
+        <ScoresPage />
       </Route>
 
       {isAuthenticated ? (

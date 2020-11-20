@@ -7,7 +7,7 @@ import { SocketContext } from '../context/socketContext'
 export const RoomsPage = () => {
   const { request, loading } = useHttp()
   const [rooms, setRooms] = useState([])
-  const [roomsCapacity, setRoomsCapacity] = useState({})
+  const [gameRooms, setGameRooms] = useState({})
   const { socket } = useContext(SocketContext)
 
   const fetchRooms = useCallback(async () => {
@@ -22,20 +22,17 @@ export const RoomsPage = () => {
   }, [fetchRooms])
 
   const setCapacityCB = (rooms) => {
-    setRoomsCapacity(rooms)
+    setGameRooms(rooms)
   }
 
   useEffect(() => {
     socket.on('roomsAndUsers', setCapacityCB)
     socket.emit('getRoomCapacity')
-    const interval = setInterval(() => {
-      socket.emit('getRoomCapacity')
-    }, 3000)
+    socket.on('allRoomsQtyUpdate', setCapacityCB)
 
     const socketCopy = socket
 
     return () => {
-      clearInterval(interval)
       socketCopy.removeAllListeners()
     }
   }, [socket])
@@ -53,7 +50,7 @@ export const RoomsPage = () => {
             key={room._id}
             room={room}
             capacity={
-              (roomsCapacity[room._id] && roomsCapacity[room._id].length) || 0
+              (gameRooms[room._id] && gameRooms[room._id].users.length) || 0
             }
           />
         ))}

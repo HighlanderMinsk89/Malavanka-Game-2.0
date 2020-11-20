@@ -13,6 +13,7 @@ app.use(express.json({ extended: true }))
 
 app.use('/api/auth', require('./routes/auth.routes'))
 app.use('/api/room', require('./routes/room.routes'))
+app.use('/api/word', require('./routes/word.routes'))
 
 // if (process.env.NODE_ENV === "production") {
 //   app.use("/", express.static(path.join(__dirname, "client", "build")));
