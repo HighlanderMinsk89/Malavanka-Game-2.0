@@ -7,7 +7,6 @@ export const GameResultsModal = ({ socket, roomid, yourTurn }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (timer === 0 && yourTurn) {
-        console.log('EMMITING FINISH_____________________')
         socket.emit('newGame', roomid)
       } else {
         setTimer((seconds) => seconds - 1)

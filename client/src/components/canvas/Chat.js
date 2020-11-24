@@ -10,7 +10,9 @@ export const Chat = ({ socket, gameState }) => {
   const { userName, location } = useContext(AuthContext)
   const { roomid } = useParams()
 
-  let yourTurn
+  console.log('users', users)
+
+  let yourTurn = false
   if (gameState.activeUser) {
     yourTurn = socket.id === Object.keys(gameState.activeUser)[0]
   }
@@ -41,7 +43,11 @@ export const Chat = ({ socket, gameState }) => {
     socket.on('usersRoomUpdate', (users) => setUsers(users))
 
     return () => {
-      socketCopy.removeAllListeners()
+      socketCopy.removeListener('getRoomUsers')
+      socketCopy.removeListener('welcomeMessage')
+      socketCopy.removeListener('userJoinedMessage')
+      socketCopy.removeListener('message')
+      socketCopy.removeListener('usersRoomUpdate')
     }
   }, [setMessages, setUsers, userName, socket, location, roomid])
 
@@ -51,7 +57,7 @@ export const Chat = ({ socket, gameState }) => {
 
   const handleSendMessage = () => {
     let input = message
-    if (input === gameState.word) input = 'HUI VAM'
+    if (gameState.word && input === gameState.word.word) input = 'HUI VAM'
     const body = {
       message: input,
       location,
@@ -70,7 +76,7 @@ export const Chat = ({ socket, gameState }) => {
           users.map((user, idx) => {
             return (
               <div className='chip red white-text' key={idx}>
-                {user.userName}
+                {user.userName} + P: {user.points}
               </div>
             )
           })}
@@ -87,14 +93,14 @@ export const Chat = ({ socket, gameState }) => {
       </div>
       <div className='chat-form'>
         <input
-          disabled={yourTurn}
+          disabled={yourTurn && gameState.isPlaying}
           value={message}
           type='text'
           placeholder='Say something'
           onChange={handleFormChange}
         />
         <button
-          disabled={yourTurn}
+          disabled={yourTurn && gameState.isPlaying}
           className='btn is-success'
           onClick={handleSendMessage}
         >

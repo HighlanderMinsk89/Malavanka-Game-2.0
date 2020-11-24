@@ -5,12 +5,13 @@ class Game {
     this.roomid = roomid
     this.users = [user]
     this.activeUser = null
-    this.word = undefined
+    this.word = null
     this.isPlaying = false
     this.allChoseCorrectWord = false
     this.round = 0
     this.roundFinished = false
     this.gameFinished = false
+    this.roundTimer = 10
   }
 
   setActiveUser(socketId) {
@@ -21,17 +22,50 @@ class Game {
     this.word = word
   }
 
+  setRoundTimer() {
+    this.roundTimer--
+  }
+
   addUser(user) {
     this.users.push(user)
+    if (this.users.length === 1) this.activeUser = this.users[0]
     if (this.users.length === 2) this.startGame()
   }
 
+  setDefaultGame() {
+    this.activeUser = null
+    this.word = null
+    this.isPlaying = false
+    this.allChoseCorrectWord = false
+    this.round = 0
+    this.roundFinished = false
+    this.gameFinished = false
+    this.roundTimer = 10
+  }
+
   removeUserFromRoom(socketId) {
-    this.users = this.users.filter((user) => Object.keys(user)[0] !== socketId)
-    if (this.users.length < 2) {
+    if (this.users.length === 1) {
+      this.users = []
+      this.setDefaultGame()
+    } else if (this.users.length === 2) {
+      this.users = this.users.filter(
+        (user) => Object.keys(user)[0] !== socketId
+      )
       this.isPlaying = false
-      this.round = 0
-      this.gameFinished = false
+      this.setDefaultGame()
+      this.activeUser = this.users[0]
+    } else {
+      if (this.activeUser && Object.keys(this.activeUser)[0] === socketId) {
+        const activeIdx = this.users.findIndex(
+          (player) => player === this.activeUser
+        )
+        activeIdx === this.users.length - 1
+          ? (this.activeUser = this.users[0])
+          : (this.activeUser = this.users[activeIdx + 1])
+      }
+      this.users = this.users.filter(
+        (user) => Object.keys(user)[0] !== socketId
+      )
     }
   }
 
@@ -51,7 +85,7 @@ class Game {
   startRound() {
     this.round++
     this.roundFinished = false
-    this.word = undefined
+    this.word = null
     this.allChoseCorrectWord = false
     this.activeUser = this.users[0]
     const active = Object.values(this.activeUser)[0]
@@ -59,6 +93,7 @@ class Game {
   }
 
   nextPlayer(skipped) {
+    this.roundTimer = 10
     const activeIdx = this.users.findIndex(
       (player) => player === this.activeUser
     )
@@ -67,12 +102,13 @@ class Game {
       this.roundFinished = true
     } else {
       this.activeUser = this.users[activeIdx + 1]
-      this.word = undefined
+      this.activeUser.isTurnToDraw = true
+      this.word = null
     }
   }
 
-  nextRound() {
-    if (this.round === 3) this.finishGame()
+  nextRound(round) {
+    if (round === 3) this.finishGame()
     else {
       this.startRound()
     }
@@ -80,14 +116,15 @@ class Game {
 
   finishGame() {
     this.round = 0
-    // this.activeUser = null
-    this.word = undefined
+    this.word = null
     this.gameFinished = true
   }
 }
 
 const createGame = (roomid, user) => {
-  return new Game(roomid, user)
+  const game = new Game(roomid, user)
+  game.activeUser = user
+  return game
 }
 
 module.exports = { roomsAndUsers, createGame }

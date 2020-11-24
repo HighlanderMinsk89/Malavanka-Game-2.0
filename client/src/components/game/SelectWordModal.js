@@ -5,7 +5,7 @@ import { useHttp } from '../../hooks/http.hook'
 export const SelectWordModal = ({ socket, roomid }) => {
   const [words, setWords] = useState([])
   const [selectedWord, setSelectedWord] = useState(false)
-  const { request, loading } = useHttp()
+  const { request, loading, error } = useHttp()
 
   const mountedRef = useRef(true)
 
@@ -14,14 +14,14 @@ export const SelectWordModal = ({ socket, roomid }) => {
       const response = await request('/api/word/getrandom3', 'get')
       if (mountedRef.current) setWords(response)
     } catch (e) {
-      console.error(e)
+      console.error(error)
     }
-  }, [request])
+  }, [request, error])
 
-  const handleClick = (e) => {
-    setSelectedWord(e.target.innerHTML)
+  const handleClick = (word) => (e) => {
+    setSelectedWord(word)
     socket.emit('wordSelected', {
-      selectedWord: e.target.innerHTML,
+      selectedWord: word,
       roomid,
     })
   }

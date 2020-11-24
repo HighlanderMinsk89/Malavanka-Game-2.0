@@ -1,14 +1,16 @@
 const { roomsAndUsers, createGame } = require('./game-module/game')
 
 const socketForGame = (io, socket) => {
-  socket.on('userJoined', ({ roomid }) => {
-    io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
-  })
+  // socket.on('userJoined', ({ roomid }) => {
+  //   io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
+  // })
 
   socket.on('wordSelected', ({ selectedWord, roomid }) => {
     if (roomsAndUsers[roomid]) {
-      roomsAndUsers[roomid].setWord(selectedWord)
+      roomsAndUsers[roomid].word = selectedWord
+      roomsAndUsers[roomid].roundTimer = 10
       io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
+      console.log('emitted!', roomsAndUsers[roomid].word.word)
     }
   })
 
@@ -16,19 +18,48 @@ const socketForGame = (io, socket) => {
     if (roomsAndUsers[roomid]) {
       roomsAndUsers[roomid].nextPlayer(true)
       io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
+      io.to(roomid).emit(
+        'usersRoomUpdate',
+        getUsersInRoom(roomsAndUsers, roomid)
+      )
     }
   })
 
-  socket.on('nextRound', (roomid) => {
+  socket.on('nextRound', ({ roomid, round }) => {
     if (roomsAndUsers[roomid]) {
-      roomsAndUsers[roomid].nextRound()
+      roomsAndUsers[roomid].nextRound(round)
       io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
+      io.to(roomid).emit(
+        'usersRoomUpdate',
+        getUsersInRoom(roomsAndUsers, roomid)
+      )
     }
   })
   socket.on('newGame', (roomid) => {
     if (roomsAndUsers[roomid]) {
       roomsAndUsers[roomid].startNewGame()
       io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
+      io.to(roomid).emit(
+        'usersRoomUpdate',
+        getUsersInRoom(roomsAndUsers, roomid)
+      )
+    }
+  })
+  socket.on('drawFinishedNextPlayer', (roomid) => {
+    if (roomsAndUsers[roomid]) {
+      roomsAndUsers[roomid].nextPlayer(false)
+      io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
+      io.to(roomid).emit(
+        'usersRoomUpdate',
+        getUsersInRoom(roomsAndUsers, roomid)
+      )
+    }
+  })
+
+  socket.on('roundTimer', ({ roomid }) => {
+    if (roomsAndUsers[roomid]) {
+      roomsAndUsers[roomid].setRoundTimer()
+      io.to(roomid).emit('roundTimerUpdate', roomsAndUsers[roomid].roundTimer)
     }
   })
 }
@@ -45,6 +76,12 @@ const socketForChat = (io, socket) => {
       roomsAndUsers[roomid] = createGame(roomid, newSocketUser)
     } else {
       roomsAndUsers[roomid].addUser(newSocketUser)
+    }
+
+    io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
+
+    if (roomsAndUsers[roomid].users.length === 2) {
+      socket.emit('clearCanvasBeforeGame')
     }
 
     socket.emit('welcomeMessage', 'Welcome to the chat')
