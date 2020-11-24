@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { EditDrawTools } from './EditDrawTools'
 
-export const CanvasMain = ({ socket }) => {
+export const CanvasMain = ({ socket, yourTurn }) => {
   const [isDrawing, setIsDrawing] = useState(false)
   const [colorSelected, setColorSelected] = useState('red')
   const [lineSelected, setLineSelected] = useState(4)
@@ -20,15 +20,26 @@ export const CanvasMain = ({ socket }) => {
     contextRef.current.lineWidth = weight
   }
 
-  const clearCanvas = (withEmit) => {
-    contextRef.current.clearRect(
-      0,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    )
-    if (withEmit) socket.emit('clearCanvas', { roomid })
-  }
+  const clearCanvas = useCallback(
+    (withEmit) => {
+      contextRef.current.clearRect(
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      )
+      if (withEmit) socket.emit('clearCanvas', { roomid })
+    },
+    [socket, roomid]
+  )
+
+  useEffect(() => {
+    socketRef.current.on('clearCanvasBeforeGame', () => {
+      clearCanvas(true)
+      socket.emit('colorChange', { newColor: 'red', roomid })
+      socket.emit('lineChange', { newLine: 4, roomid })
+    })
+  }, [clearCanvas, roomid, socket])
 
   useEffect(() => {
     socketRef.current.on('startDrawingCli', ({ offsetX, offsetY }) => {
@@ -81,27 +92,31 @@ export const CanvasMain = ({ socket }) => {
   }, [])
 
   const startDrawing = (e) => {
-    const { offsetX, offsetY } = e.nativeEvent
-    contextRef.current.beginPath()
-    contextRef.current.moveTo(offsetX * 2, offsetY * 2)
-    setIsDrawing(true)
+    if (yourTurn) {
+      const { offsetX, offsetY } = e.nativeEvent
+      contextRef.current.beginPath()
+      contextRef.current.moveTo(offsetX * 2, offsetY * 2)
+      setIsDrawing(true)
 
-    socket.emit('startDrawing', {
-      roomid,
-      offsetX,
-      offsetY,
-    })
+      socket.emit('startDrawing', {
+        roomid,
+        offsetX,
+        offsetY,
+      })
+    }
   }
 
   const finishDrawing = () => {
-    setIsDrawing(false)
-    contextRef.current.closePath()
+    if (yourTurn) {
+      setIsDrawing(false)
+      contextRef.current.closePath()
 
-    socket.emit('finishDrawing', { roomid })
+      socket.emit('finishDrawing', { roomid })
+    }
   }
 
   const draw = (e) => {
-    if (!isDrawing) return
+    if (!isDrawing || !yourTurn) return
     const { offsetX, offsetY } = e.nativeEvent
     contextRef.current.lineTo(offsetX * 2, offsetY * 2)
     contextRef.current.stroke()
@@ -126,6 +141,7 @@ export const CanvasMain = ({ socket }) => {
         setColorSelected={setColorSelected}
         lineSelected={lineSelected}
         colorSelected={colorSelected}
+        yourTurn={yourTurn}
       />
       <canvas
         onMouseDown={startDrawing}

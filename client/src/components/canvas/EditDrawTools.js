@@ -14,6 +14,7 @@ export const EditDrawTools = ({
   roomid,
   colorSelected,
   lineSelected,
+  yourTurn,
 }) => {
   const onColorChange = (e) => {
     const newColor = e.target.getAttribute('color')
@@ -30,7 +31,7 @@ export const EditDrawTools = ({
   }
 
   return (
-    <div className='edit-draw-cont' style={{ width }}>
+    <div className='edit-draw-cont' style={{ width }} disabled={!yourTurn}>
       <div className='edit-colors'>
         {colors.map((color) => {
           return (

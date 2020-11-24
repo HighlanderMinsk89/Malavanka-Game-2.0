@@ -189,6 +189,13 @@ display: flex;
 width: 40%;
 }
 
+div[disabled] {
+  
+    pointer-events: none;
+    opacity: 0.7;
+  
+}
+
 .color-picker {
   height: 100%;
   width: 12%;
@@ -216,4 +223,11 @@ width: 40%;
 
 .color-selected {
   box-shadow: 0 4px 8px 0 rgba(255, 0, 0, 0.795), 0 6px 20px 0 rgba(223, 0, 0, 0.788);
+}
+
+/* GAME PROCESS_____________________________________ */
+.secret-word {
+  background-color: cadetblue;
+  text-align: center;
+  letter-spacing: 2rem;
 }

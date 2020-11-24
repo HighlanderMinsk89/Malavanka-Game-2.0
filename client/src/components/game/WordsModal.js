@@ -3,7 +3,7 @@ import { Modal, Row, Col, CardPanel } from 'react-materialize'
 import { Loader } from '../Loader'
 
 export const WordModal = ({ handleClick, words, loading, roomid, socket }) => {
-  const [timer, setTimer] = useState(3)
+  const [timer, setTimer] = useState(10)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -39,7 +39,7 @@ export const WordModal = ({ handleClick, words, loading, roomid, socket }) => {
           {words.map((word) => {
             return (
               <Col key={word._id} m={4} s={12}>
-                <CardPanel onClick={handleClick} className='black'>
+                <CardPanel onClick={handleClick(word)} className='black'>
                   <p className='white-text word-card'>{word.word}</p>
                 </CardPanel>
               </Col>

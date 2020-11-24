@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Row, Col } from 'react-materialize'
 
-export const RoundResultsModal = ({ socket, roomid, yourTurn }) => {
+export const RoundResultsModal = ({ socket, roomid, yourTurn, round }) => {
   const [timer, setTimer] = useState(5)
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (timer === 0 && yourTurn) {
-        socket.emit('nextRound', roomid)
+        socket.emit('nextRound', { roomid, round })
       } else {
         setTimer((seconds) => seconds - 1)
       }
     }, 1000)
     return () => clearInterval(interval)
-  }, [timer, roomid, socket, yourTurn])
+  }, [timer, roomid, socket, yourTurn, round])
 
   return (
     <Modal
