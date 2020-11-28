@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
+import { GameContext } from '../../context/gameContext'
 
-export const RoundTimer = ({ roomid, socket, yourTurn }) => {
-  const [timer, setTimer] = useState()
+export const RoundTimer = () => {
+  const [timer, setTimer] = useState(30)
+  const { roomid, socket, yourTurn } = useContext(GameContext)
 
   let interval = useRef()
   useEffect(() => {

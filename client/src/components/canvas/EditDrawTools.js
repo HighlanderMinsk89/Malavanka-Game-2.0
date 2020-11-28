@@ -1,10 +1,9 @@
 import React from 'react'
 
-const colors = ['red', 'purple', 'green', 'yellow', 'blue', 'brown', 'white']
+const colors = ['red', 'purple', 'white', 'green', 'yellow', 'blue', 'brown']
 const lineWeight = [4, 10, 18, 28, 36]
 
 export const EditDrawTools = ({
-  width,
   setColorSelected,
   setLineSelected,
   changeColor,
@@ -31,7 +30,13 @@ export const EditDrawTools = ({
   }
 
   return (
-    <div className='edit-draw-cont' style={{ width }} disabled={!yourTurn}>
+    <div className='edit-draw-cont' disabled={!yourTurn}>
+      <button
+        onClick={() => clearCanvas(true)}
+        className='btn btn-small waves-effect waves-light red'
+      >
+        Clear
+      </button>
       <div className='edit-colors'>
         {colors.map((color) => {
           return (
@@ -68,13 +73,6 @@ export const EditDrawTools = ({
           )
         })}
       </div>
-      <button
-        onClick={() => clearCanvas(true)}
-        className='btn btn-small waves-effect waves-light red'
-        style={{ marginLeft: '1rem', height: '100%' }}
-      >
-        Clear
-      </button>
     </div>
   )
 }

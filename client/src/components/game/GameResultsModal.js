@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Modal, Row, Col } from 'react-materialize'
+import { GameContext } from '../../context/gameContext'
+import { GameResultsTable } from './GameResultsTable'
 
-export const GameResultsModal = ({ socket, roomid, yourTurn }) => {
+export const GameResultsModal = () => {
   const [timer, setTimer] = useState(15)
+  const { socket, yourTurn, roomid, gameState } = useContext(GameContext)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -30,10 +33,10 @@ export const GameResultsModal = ({ socket, roomid, yourTurn }) => {
         startingTop: '4%',
       }}
     >
+      <GameResultsTable gameState={gameState} />
       <Row>
-        <h4>New Game Starts in {timer} seconds...</h4>
-        <Col m={4} s={12}>
-          <p>Results</p>
+        <Col>
+          <h4>New Game Starts in {timer} seconds...</h4>
         </Col>
       </Row>
     </Modal>

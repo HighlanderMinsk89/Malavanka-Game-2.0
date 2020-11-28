@@ -8,7 +8,7 @@ const socketForGame = (io, socket) => {
   socket.on('wordSelected', ({ selectedWord, roomid }) => {
     if (roomsAndUsers[roomid]) {
       roomsAndUsers[roomid].word = selectedWord
-      roomsAndUsers[roomid].roundTimer = 10
+      roomsAndUsers[roomid].roundTimer = 30
       io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
       console.log('emitted!', roomsAndUsers[roomid].word.word)
     }
@@ -53,6 +53,7 @@ const socketForGame = (io, socket) => {
         'usersRoomUpdate',
         getUsersInRoom(roomsAndUsers, roomid)
       )
+      socket.emit('clearCanvasBeforeGame')
     }
   })
 
@@ -60,6 +61,17 @@ const socketForGame = (io, socket) => {
     if (roomsAndUsers[roomid]) {
       roomsAndUsers[roomid].setRoundTimer()
       io.to(roomid).emit('roundTimerUpdate', roomsAndUsers[roomid].roundTimer)
+    }
+  })
+
+  socket.on('wordMatch', ({ roomid, socketId }) => {
+    if (roomsAndUsers[roomid]) {
+      roomsAndUsers[roomid].calcPointsForUserOnMatch(socketId)
+      io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
+      io.to(roomid).emit(
+        'usersRoomUpdate',
+        getUsersInRoom(roomsAndUsers, roomid)
+      )
     }
   })
 }
@@ -70,7 +82,14 @@ const socketForChat = (io, socket) => {
     socket.roomJoined = roomid
 
     const newSocketUser = {
-      [socketId]: { userName, location, isTurnToDraw: false, points: 0 },
+      [socketId]: {
+        userName,
+        location,
+        isTurnToDraw: false,
+        points: 0,
+        roundPoints: 0,
+        match: false,
+      },
     }
     if (!roomsAndUsers[roomid]) {
       roomsAndUsers[roomid] = createGame(roomid, newSocketUser)

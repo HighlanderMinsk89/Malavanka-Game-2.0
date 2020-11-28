@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
+import { GameContext } from '../../context/gameContext'
 
-export const Chat = ({ socket, gameState }) => {
+export const Chat = () => {
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
-  const [users, setUsers] = useState([])
+
+  const { socket, gameState } = useContext(GameContext)
 
   const { userName, location } = useContext(AuthContext)
   const { roomid } = useParams()
-
-  console.log('users', users)
 
   let yourTurn = false
   if (gameState.activeUser) {
@@ -19,7 +19,6 @@ export const Chat = ({ socket, gameState }) => {
 
   useEffect(() => {
     const socketCopy = socket
-    socket.emit('getRoomUsers', roomid)
 
     socket.on('welcomeMessage', (message) => {
       const editedM = {
@@ -40,16 +39,12 @@ export const Chat = ({ socket, gameState }) => {
       setMessages((prevMess) => [...prevMess, message])
     })
 
-    socket.on('usersRoomUpdate', (users) => setUsers(users))
-
     return () => {
-      socketCopy.removeListener('getRoomUsers')
       socketCopy.removeListener('welcomeMessage')
       socketCopy.removeListener('userJoinedMessage')
       socketCopy.removeListener('message')
-      socketCopy.removeListener('usersRoomUpdate')
     }
-  }, [setMessages, setUsers, userName, socket, location, roomid])
+  }, [setMessages, userName, socket, location, roomid])
 
   const handleFormChange = (e) => {
     setMessage(e.target.value)
@@ -57,7 +52,10 @@ export const Chat = ({ socket, gameState }) => {
 
   const handleSendMessage = () => {
     let input = message
-    if (gameState.word && input === gameState.word.word) input = 'HUI VAM'
+    if (gameState.word && input === gameState.word.word) {
+      input = 'MATCH'
+      socket.emit('wordMatch', { roomid, socketId: socket.id })
+    }
     const body = {
       message: input,
       location,
@@ -71,16 +69,6 @@ export const Chat = ({ socket, gameState }) => {
 
   return (
     <div className='chat-container'>
-      <div className='nicks'>
-        {users &&
-          users.map((user, idx) => {
-            return (
-              <div className='chip red white-text' key={idx}>
-                {user.userName} + P: {user.points}
-              </div>
-            )
-          })}
-      </div>
       <div className='chat-box'>
         {messages.map((body, index) => {
           return (

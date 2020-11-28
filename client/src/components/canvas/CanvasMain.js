@@ -131,7 +131,6 @@ export const CanvasMain = ({ socket, yourTurn }) => {
   return (
     <div className='canvas-cont' {...onResize}>
       <EditDrawTools
-        width={`${window.innerWidth / 2}px`}
         changeColor={changeColor}
         changeLineWeight={changeLineWeight}
         clearCanvas={clearCanvas}
