@@ -1,22 +1,18 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { WordModal } from './WordsModal'
 import { useHttp } from '../../hooks/http.hook'
+import { useMessage } from '../../hooks/message.hook'
 
 export const SelectWordModal = ({ socket, roomid }) => {
   const [words, setWords] = useState([])
   const [selectedWord, setSelectedWord] = useState(false)
-  const { request, loading, error } = useHttp()
-
-  const mountedRef = useRef(true)
+  const { request, loading, error, clearError } = useHttp()
+  const message = useMessage()
 
   const fetchWords = useCallback(async () => {
-    try {
-      const response = await request('/api/word/getrandom3', 'get')
-      if (mountedRef.current) setWords(response)
-    } catch (e) {
-      console.error(error)
-    }
-  }, [request, error])
+    const response = await request('/api/word/getrandom3', 'get')
+    if (response) setWords(response)
+  }, [request])
 
   const handleClick = (word) => (e) => {
     setSelectedWord(word)
@@ -27,14 +23,13 @@ export const SelectWordModal = ({ socket, roomid }) => {
   }
 
   useEffect(() => {
-    fetchWords()
-  }, [fetchWords])
+    message(error)
+    clearError()
+  }, [error, clearError, message])
 
   useEffect(() => {
-    return () => {
-      mountedRef.current = false
-    }
-  }, [])
+    fetchWords()
+  }, [fetchWords])
 
   return !selectedWord ? (
     <WordModal

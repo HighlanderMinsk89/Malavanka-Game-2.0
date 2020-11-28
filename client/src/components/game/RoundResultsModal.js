@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Modal, Row, Col } from 'react-materialize'
+import { GameContext } from '../../context/gameContext'
+import { RoundResultsTable } from './RoundResultsTable'
 
-export const RoundResultsModal = ({ socket, roomid, yourTurn, round }) => {
+export const RoundResultsModal = () => {
   const [timer, setTimer] = useState(5)
+  const { socket, roomid, yourTurn, gameState } = useContext(GameContext)
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (timer === 0 && yourTurn) {
-        socket.emit('nextRound', { roomid, round })
+        socket.emit('nextRound', { roomid, round: gameState.round })
       } else {
         setTimer((seconds) => seconds - 1)
       }
     }, 1000)
     return () => clearInterval(interval)
-  }, [timer, roomid, socket, yourTurn, round])
+  }, [timer, roomid, socket, yourTurn, gameState.round])
 
   return (
     <Modal
@@ -30,10 +33,10 @@ export const RoundResultsModal = ({ socket, roomid, yourTurn, round }) => {
         startingTop: '4%',
       }}
     >
+      <RoundResultsTable gameState={gameState} socket={socket} />
       <Row>
-        <h4>{timer}</h4>
         <Col m={4} s={12}>
-          <p>Results</p>
+          <h4>{timer}</h4>
         </Col>
       </Row>
     </Modal>

@@ -11,7 +11,8 @@ class Game {
     this.round = 0
     this.roundFinished = false
     this.gameFinished = false
-    this.roundTimer = 10
+    this.roundTimer = 30
+    this.countMatch = 0
   }
 
   setActiveUser(socketId) {
@@ -40,7 +41,8 @@ class Game {
     this.round = 0
     this.roundFinished = false
     this.gameFinished = false
-    this.roundTimer = 10
+    this.roundTimer = 30
+    this.countMatch = 0
   }
 
   removeUserFromRoom(socketId) {
@@ -51,6 +53,11 @@ class Game {
       this.users = this.users.filter(
         (user) => Object.keys(user)[0] !== socketId
       )
+      this.users.forEach((user) => {
+        Object.values(user)[0].points = 0
+        Object.values(user)[0].roundPoints = 0
+        Object.values(user)[0].match = false
+      })
       this.isPlaying = false
       this.setDefaultGame()
       this.activeUser = this.users[0]
@@ -77,12 +84,17 @@ class Game {
   startNewGame() {
     this.users.forEach((user) => {
       Object.values(user)[0].points = 0
+      Object.values(user)[0].roundPoints = 0
+      Object.values(user)[0].match = false
     })
     this.gameFinished = false
     this.startRound()
   }
 
   startRound() {
+    this.users.forEach((user) => {
+      Object.values(user)[0].roundPoints = 0
+    })
     this.round++
     this.roundFinished = false
     this.word = null
@@ -93,17 +105,49 @@ class Game {
   }
 
   nextPlayer(skipped) {
-    this.roundTimer = 10
+    // bonus for active
+    if (this.countMatch === this.users.length - 1) {
+      console.log('this.activeUser', this.activeUser)
+      Object.values(this.activeUser)[0].points += this.roundTimer
+      Object.values(this.activeUser)[0].roundPoints += this.roundTimer
+    }
+    this.users.forEach((user) => {
+      Object.values(user)[0].match = false
+    })
+    this.roundTimer = 30
+    this.countMatch = 0
     const activeIdx = this.users.findIndex(
       (player) => player === this.activeUser
     )
-    if (skipped) Object.values(this.activeUser)[0].points -= 2
+    if (skipped) {
+      Object.values(this.activeUser)[0].points -= 10
+      Object.values(this.activeUser)[0].roundPoints -= 10
+    }
     if (activeIdx === this.users.length - 1) {
       this.roundFinished = true
     } else {
       this.activeUser = this.users[activeIdx + 1]
       this.activeUser.isTurnToDraw = true
       this.word = null
+    }
+  }
+
+  calcPointsForUserOnMatch(socketId) {
+    const user = this.users.find((user) => Object.keys(user)[0] === socketId)
+    if (!user[socketId].match) {
+      let points = 0
+      points += this.roundTimer
+      if (this.countMatch === 0) points += 30
+      else if (this.countMatch === 1) points += 20
+      else if (this.countMatch === 2) points += 10
+      if (this.roundTimer > 15 && this.roundTimer <= 30) points *= 0.9
+      if (this.roundTimer <= 15) points *= 0.8
+      points = Math.floor(points)
+      this.countMatch++
+      user[socketId].points = user[socketId].points + points
+      user[socketId].roundPoints = user[socketId].roundPoints + points
+      user[socketId].match = true
+      if (this.countMatch === this.users.length - 1) this.nextPlayer(false)
     }
   }
 

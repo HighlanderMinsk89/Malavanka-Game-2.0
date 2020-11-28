@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { GameContext } from '../../context/gameContext'
 
-export const UserScore = ({ socket, roomid, users }) => {
+export const UserScore = () => {
   const [score, setScore] = useState(0)
+  const { socket, gameState } = useContext(GameContext)
 
   useEffect(() => {
-    if (users) {
-      const user = users.filter((user) => Object.keys(user)[0] === socket.id)[0]
+    if (gameState.users) {
+      const user = gameState.users.filter(
+        (user) => Object.keys(user)[0] === socket.id
+      )[0]
       setScore(Object.values(user)[0].points)
     }
-  }, [socket.id, users])
+  }, [gameState.users, socket.id])
 
   return (
     <div>
