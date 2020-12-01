@@ -10,7 +10,7 @@ const socketForGame = (io, socket) => {
       roomsAndUsers[roomid].word = selectedWord
       roomsAndUsers[roomid].roundTimer = 30
       io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
-      console.log('emitted!', roomsAndUsers[roomid].word.word)
+      socket.emit('clearCanvasBeforeGame')
     }
   })
 
@@ -22,6 +22,7 @@ const socketForGame = (io, socket) => {
         'usersRoomUpdate',
         getUsersInRoom(roomsAndUsers, roomid)
       )
+      socket.emit('clearCanvasBeforeGame')
     }
   })
 
@@ -33,6 +34,7 @@ const socketForGame = (io, socket) => {
         'usersRoomUpdate',
         getUsersInRoom(roomsAndUsers, roomid)
       )
+      socket.emit('clearCanvasBeforeGame')
     }
   })
   socket.on('newGame', (roomid) => {

@@ -1,38 +1,34 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { CanvasContext } from '../../context/canvasContext'
 
 const colors = ['red', 'purple', 'white', 'green', 'yellow', 'blue', 'brown']
 const lineWeight = [4, 10, 18, 28, 36]
 
-export const EditDrawTools = ({
-  setColorSelected,
-  setLineSelected,
-  changeColor,
-  changeLineWeight,
-  clearCanvas,
-  socket,
-  roomid,
-  colorSelected,
-  lineSelected,
-  yourTurn,
-}) => {
+export const EditDrawTools = ({ socket, clearCanvas }) => {
+  const {
+    colorSelected,
+    lineSelected,
+    setColorSelected,
+    setLineSelected,
+    roomid,
+  } = useContext(CanvasContext)
+
   const onColorChange = (e) => {
     const newColor = e.target.getAttribute('color')
     setColorSelected(newColor)
-    changeColor(newColor)
     socket.emit('colorChange', { newColor, roomid })
   }
 
   const onLineChange = (e) => {
     const newLine = +e.target.getAttribute('lineweight')
     setLineSelected(newLine)
-    changeLineWeight(newLine)
     socket.emit('lineChange', { newLine, roomid })
   }
 
   return (
-    <div className='edit-draw-cont' disabled={!yourTurn}>
+    <div className='edit-draw-cont'>
       <button
-        onClick={() => clearCanvas(true)}
+        onClick={clearCanvas}
         className='btn btn-small waves-effect waves-light red'
       >
         Clear

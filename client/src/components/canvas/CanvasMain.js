@@ -1,197 +1,42 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { CanvasComponent } from './CanvasComponent'
 import { EditDrawTools } from './EditDrawTools'
+import { CanvasContext } from '../../context/canvasContext'
 
 export const CanvasMain = ({ socket, yourTurn }) => {
-  const [isDrawing, setIsDrawing] = useState(false)
   const [colorSelected, setColorSelected] = useState('red')
   const [lineSelected, setLineSelected] = useState(4)
+  const [clear, setClear] = useState(false)
   const { roomid } = useParams()
 
-  const canvasRef = useRef(null)
-  const contextRef = useRef(null)
-  const socketRef = useRef(socket)
-
-  const changeColor = (color) => {
-    contextRef.current.strokeStyle = color
-  }
-
-  const changeLineWeight = (weight) => {
-    contextRef.current.lineWidth = weight
-  }
-
-  const clearCanvas = useCallback(
-    (withEmit) => {
-      contextRef.current.clearRect(
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height
-      )
-      if (withEmit) socket.emit('clearCanvas', { roomid })
-    },
-    [socket, roomid]
-  )
-
-  useEffect(() => {
-    socketRef.current.on('clearCanvasBeforeGame', () => {
-      clearCanvas(true)
-      socket.emit('colorChange', { newColor: 'red', roomid })
-      socket.emit('lineChange', { newLine: 4, roomid })
-    })
-  }, [clearCanvas, roomid, socket])
-
-  useEffect(() => {
-    socketRef.current.on('startDrawingCli', ({ offsetX, offsetY }) => {
-      contextRef.current.beginPath()
-      contextRef.current.moveTo(
-        offsetX * 2 * canvasRef.current.width,
-        offsetY * 2 * canvasRef.current.height
-      )
-      setIsDrawing(true)
-    })
-
-    socketRef.current.on('finishDrawingCli', () => {
-      setIsDrawing(false)
-      contextRef.current.closePath()
-    })
-
-    socketRef.current.on('drawCli', ({ offsetX, offsetY }) => {
-      contextRef.current.lineTo(
-        offsetX * 2 * canvasRef.current.width,
-        offsetY * 2 * canvasRef.current.height
-      )
-      contextRef.current.stroke()
-    })
-
-    socketRef.current.on('clearCanvasCli', () => {
-      clearCanvas(false)
-    })
-
-    socketRef.current.on('colorChangeCli', ({ newColor }) => {
-      changeColor(newColor)
-      setColorSelected(newColor)
-    })
-
-    socketRef.current.on('lineChangeCli', ({ newLine }) => {
-      changeLineWeight(newLine)
-      setLineSelected(newLine)
-    })
-  })
-
-  const setCanvasDimensions = useCallback((image) => {
-    const canvas = canvasRef.current
-
-    canvas.style.width = '100%'
-    const height = +window
-      .getComputedStyle(canvas, null)
-      .getPropertyValue('width')
-      .slice(0, -2)
-    canvas.style.height = height * 0.7 + 'px'
-    canvas.width =
-      +window
-        .getComputedStyle(canvas, null)
-        .getPropertyValue('width')
-        .slice(0, -2) * 2
-    canvas.height =
-      +window
-        .getComputedStyle(canvas, null)
-        .getPropertyValue('height')
-        .slice(0, -2) * 2
-
-    if (image) {
-      console.log('image', image)
-      contextRef.current.putImageData(image, 0, 0)
-    }
-  }, [])
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-
-    canvas.style.backgroundColor = 'white'
-
-    const context = canvas.getContext('2d')
-    context.lineCap = 'round'
-    context.strokeStyle = colorSelected
-    context.lineWidth = lineSelected
-
-    contextRef.current = context
-    setCanvasDimensions()
-  }, [])
-
-  useEffect(() => {
-    const onResize = () => {
-      const image = contextRef.current.getImageData(
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height
-      )
-
-      setCanvasDimensions(image)
-    }
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-
-  const startDrawing = (e) => {
-    if (yourTurn) {
-      const { offsetX, offsetY } = e.nativeEvent
-      contextRef.current.beginPath()
-      contextRef.current.moveTo(offsetX * 2, offsetY * 2)
-      setIsDrawing(true)
-
-      socket.emit('startDrawing', {
-        roomid,
-        offsetX: offsetX / canvasRef.current.width,
-        offsetY: offsetY / canvasRef.current.height,
-      })
-    }
-  }
-
-  const finishDrawing = () => {
-    if (yourTurn) {
-      setIsDrawing(false)
-      contextRef.current.closePath()
-      contextRef.current.save()
-
-      socket.emit('finishDrawing', { roomid })
-    }
-  }
-
-  const draw = (e) => {
-    if (!isDrawing || !yourTurn) return
-    const { offsetX, offsetY } = e.nativeEvent
-    contextRef.current.lineTo(offsetX * 2, offsetY * 2)
-    contextRef.current.stroke()
-
-    socket.emit('draw', {
-      offsetX: offsetX / canvasRef.current.width,
-      offsetY: offsetY / canvasRef.current.height,
-      roomid,
-    })
+  const clearCanvasWithButton = () => {
+    setClear(true)
   }
 
   return (
-    <div className='canvas-cont'>
-      <EditDrawTools
-        changeColor={changeColor}
-        changeLineWeight={changeLineWeight}
-        clearCanvas={clearCanvas}
-        socket={socket}
-        roomid={roomid}
-        setLineSelected={setLineSelected}
-        setColorSelected={setColorSelected}
-        lineSelected={lineSelected}
-        colorSelected={colorSelected}
-        yourTurn={yourTurn}
-      />
-      <canvas
-        onMouseDown={startDrawing}
-        onMouseUp={finishDrawing}
-        onMouseMove={draw}
-        ref={canvasRef}
-      />
-    </div>
+    <CanvasContext.Provider
+      value={{
+        colorSelected,
+        lineSelected,
+        clear,
+        setClear,
+        roomid,
+        setLineSelected,
+        setColorSelected,
+      }}
+    >
+      <div className='canvas-cont'>
+        {yourTurn ? (
+          <EditDrawTools
+            socket={socket}
+            yourTurn={yourTurn}
+            clearCanvas={clearCanvasWithButton}
+          />
+        ) : null}
+
+        <CanvasComponent socket={socket} yourTurn={yourTurn} />
+      </div>
+    </CanvasContext.Provider>
   )
 }
