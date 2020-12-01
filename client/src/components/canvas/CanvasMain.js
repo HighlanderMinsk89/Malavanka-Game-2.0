@@ -44,7 +44,10 @@ export const CanvasMain = ({ socket, yourTurn }) => {
   useEffect(() => {
     socketRef.current.on('startDrawingCli', ({ offsetX, offsetY }) => {
       contextRef.current.beginPath()
-      contextRef.current.moveTo(offsetX * 2, offsetY * 2)
+      contextRef.current.moveTo(
+        offsetX * 2 * canvasRef.current.width,
+        offsetY * 2 * canvasRef.current.height
+      )
       setIsDrawing(true)
     })
 
@@ -54,7 +57,10 @@ export const CanvasMain = ({ socket, yourTurn }) => {
     })
 
     socketRef.current.on('drawCli', ({ offsetX, offsetY }) => {
-      contextRef.current.lineTo(offsetX * 2, offsetY * 2)
+      contextRef.current.lineTo(
+        offsetX * 2 * canvasRef.current.width,
+        offsetY * 2 * canvasRef.current.height
+      )
       contextRef.current.stroke()
     })
 
@@ -73,22 +79,59 @@ export const CanvasMain = ({ socket, yourTurn }) => {
     })
   })
 
+  const setCanvasDimensions = useCallback((image) => {
+    const canvas = canvasRef.current
+
+    canvas.style.width = '100%'
+    const height = +window
+      .getComputedStyle(canvas, null)
+      .getPropertyValue('width')
+      .slice(0, -2)
+    canvas.style.height = height * 0.7 + 'px'
+    canvas.width =
+      +window
+        .getComputedStyle(canvas, null)
+        .getPropertyValue('width')
+        .slice(0, -2) * 2
+    canvas.height =
+      +window
+        .getComputedStyle(canvas, null)
+        .getPropertyValue('height')
+        .slice(0, -2) * 2
+
+    if (image) {
+      console.log('image', image)
+      contextRef.current.putImageData(image, 0, 0)
+    }
+  }, [])
+
   useEffect(() => {
     const canvas = canvasRef.current
 
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-    canvas.style.width = `${window.innerWidth / 2}px`
-    canvas.style.height = `${window.innerHeight / 2}px`
-    canvas.style.backgroundColor = 'black'
+    canvas.style.backgroundColor = 'white'
 
     const context = canvas.getContext('2d')
-    // context.scale(1.5, 1.5)
     context.lineCap = 'round'
     context.strokeStyle = colorSelected
     context.lineWidth = lineSelected
 
     contextRef.current = context
+    setCanvasDimensions()
+  }, [])
+
+  useEffect(() => {
+    const onResize = () => {
+      const image = contextRef.current.getImageData(
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      )
+
+      setCanvasDimensions(image)
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [])
 
   const startDrawing = (e) => {
@@ -100,8 +143,8 @@ export const CanvasMain = ({ socket, yourTurn }) => {
 
       socket.emit('startDrawing', {
         roomid,
-        offsetX,
-        offsetY,
+        offsetX: offsetX / canvasRef.current.width,
+        offsetY: offsetY / canvasRef.current.height,
       })
     }
   }
@@ -110,6 +153,7 @@ export const CanvasMain = ({ socket, yourTurn }) => {
     if (yourTurn) {
       setIsDrawing(false)
       contextRef.current.closePath()
+      contextRef.current.save()
 
       socket.emit('finishDrawing', { roomid })
     }
@@ -121,15 +165,15 @@ export const CanvasMain = ({ socket, yourTurn }) => {
     contextRef.current.lineTo(offsetX * 2, offsetY * 2)
     contextRef.current.stroke()
 
-    socket.emit('draw', { offsetX, offsetY, roomid })
-  }
-
-  const onResize = () => {
-    //TODO:
+    socket.emit('draw', {
+      offsetX: offsetX / canvasRef.current.width,
+      offsetY: offsetY / canvasRef.current.height,
+      roomid,
+    })
   }
 
   return (
-    <div className='canvas-cont' {...onResize}>
+    <div className='canvas-cont'>
       <EditDrawTools
         changeColor={changeColor}
         changeLineWeight={changeLineWeight}

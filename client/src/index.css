@@ -16,11 +16,17 @@ body {
   #root {
     max-width: 1400px;
   }
+  .body-app {
+    padding: 0 !important;
+  }
 }
 
 #root {
   width: 100%;
-  /* background-color: darkcyan; */
+}
+
+.body-app {
+  padding: 0 1rem 0 1rem;
 }
 
 .container {
@@ -101,6 +107,7 @@ body {
 /* _________________ROOM */
 .draw-cont {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
 }
 
@@ -193,13 +200,28 @@ align-self: center;
 /* CANVAS_________ */
 .canvas-cont {
   display: flex;
-  flex-direction: row;
-  flex-grow: 8;
+  flex-direction: column;
 }
-/* 
-canvas {
-  flex-grow: 1;
+
+/* @media only screen and (max-width: 1400px) {
+  canvas {
+  width: 100vw !important;
+  max-width: 100% !important;
+  height: 100vw !important;
+  }
 } */
+
+/* .c-canvas { */
+  /* flex-grow: 3; */
+  /* width: 100% ; */
+  /* max-width: 1000px !important; */
+/* } */
+
+canvas {
+  background-color: rgba(243, 236, 236, 0.306) !important;
+  border: 2px solid rgb(49, 1, 1);
+
+}
 
 .nicks {
   flex-grow: 2;
@@ -207,28 +229,32 @@ canvas {
 
 .edit-draw-cont {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  margin-bottom: 1rem;
+  align-items: center;
   height: 100%;
-  margin-right: 1rem;
 }
 
 .edit-draw-cont button {
-  margin-bottom: 0.5rem;
+margin-right: 0.5rem;
+height: 100%;
 }
 
 .edit-colors {
   display: flex;
-  flex-direction: column;
-  flex-grow: 2;
+  flex-direction: row;
+  flex-grow: 5;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  height: 40px;
+  margin-right: 0.5rem;
 }
 
 .edit-line {
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  flex-direction: row;
+  flex-grow: 3;
   justify-content: space-between;
+  height: 40px;
 }
 
 div[disabled] {
@@ -241,8 +267,9 @@ div[disabled] {
 .color-picker {
   border: 2px solid black;
   border-radius: 10%;
-  width: 100%;
-  height: 12%;
+  width: 13%;
+  height: 100%;
+  margin-left: 0.2rem;
 }
 
 .line-picker {
@@ -251,14 +278,16 @@ div[disabled] {
   background-color: rgb(255, 255, 255);
   border: 2px solid black;
   border-radius: 10%;
-  width: 100%;
-  height: 15%;
+  width: 19%;
+  height: 100%;
+  margin-left: 0.2rem;
 }
 
 .line-picker-dot {
   background-color: black;
   border-radius: 50%;
   align-self: center;
+  height: 100%;
 }
 
 .color-selected {

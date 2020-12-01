@@ -55,12 +55,12 @@ export const GameMain = ({ socket, roomid }) => {
 
         {gameState.gameFinished ? <GameResultsModal /> : null}
         <div className='draw-cont'>
+          <RoomUsers />
           <CanvasMain
             socket={socket}
             yourTurn={yourTurn}
             isPlaying={gameState.isPlaying}
           />
-          <RoomUsers />
         </div>
         <Chat />
       </div>
