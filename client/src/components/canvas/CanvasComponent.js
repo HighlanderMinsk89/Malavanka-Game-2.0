@@ -8,6 +8,57 @@ import React, {
 } from 'react'
 import { CanvasContext } from '../../context/canvasContext'
 
+// setDrawStack((prev) => [
+//     ...prev,
+//     {
+//       x: offsetX * 2,
+//       y: offsetY * 2,
+//       path: [],
+//       width: canvasRef.current.width,
+//       height: canvasRef.current.height,
+//       colorSelected,
+//       lineSelected,
+//     },
+//   ])
+
+// setDrawStack((prev) => {
+//     prev[prev.length - 1].path.push({ x: offsetX * 2, y: offsetY * 2 })
+//     return [...prev]
+//   })
+
+class RedrawStack {
+  constructor() {
+    this.stack = []
+  }
+
+  clearStack() {
+    this.stack = []
+  }
+
+  addLine(offsetX, offsetY, canvasW, canvasH, colorSelected, lineSelected) {
+    const newLine = {
+      x: offsetX * 2,
+      y: offsetY * 2,
+      path: [],
+      width: canvasW,
+      height: canvasH,
+      colorSelected,
+      lineSelected,
+    }
+
+    this.stack.push(newLine)
+  }
+
+  trackPath(offsetX, offsetY) {
+    const line = this.stack[this.stack.length - 1]
+    line.path.push({ x: offsetX * 2, y: offsetY * 2 })
+  }
+
+  getStack() {
+    return this.stack
+  }
+}
+
 export const CanvasComponent = ({
   socket,
   yourTurn,
@@ -30,6 +81,8 @@ export const CanvasComponent = ({
   const canvasRef = useRef(null)
   const contextRef = useRef(null)
   const socketRef = useRef(socket)
+
+  const redrawStack = useRef(new RedrawStack())
 
   useEffect(() => {
     socketRef.current.on('startDrawingCli', ({ offsetX, offsetY }) => {
@@ -96,7 +149,7 @@ export const CanvasComponent = ({
           canvasRef.current.width,
           canvasRef.current.height
         )
-      recreateDrawing(drawStack)
+      recreateDrawing(redrawStack.current.getStack())
     }
   }, [contWidth, contHeight])
 
@@ -133,18 +186,29 @@ export const CanvasComponent = ({
       contextRef.current.beginPath()
       contextRef.current.moveTo(offsetX * 2, offsetY * 2)
       setIsDrawing(true)
-      setDrawStack((prev) => [
-        ...prev,
-        {
-          x: offsetX * 2,
-          y: offsetY * 2,
-          path: [],
-          width: canvasRef.current.width,
-          height: canvasRef.current.height,
+      //   setDrawStack((prev) => [
+      //     ...prev,
+      //     {
+      //       x: offsetX * 2,
+      //       y: offsetY * 2,
+      //       path: [],
+      //       width: canvasRef.current.width,
+      //       height: canvasRef.current.height,
+      //       colorSelected,
+      //       lineSelected,
+      //     },
+      //   ])
+
+      redrawStack.current &&
+        redrawStack.current.addLine(
+          offsetX,
+          offsetY,
+          canvasRef.current.width,
+          canvasRef.current.height,
           colorSelected,
-          lineSelected,
-        },
-      ])
+          lineSelected
+        )
+      console.log('redrawStack.current', redrawStack.current)
 
       socket.emit('startDrawing', {
         roomid,
@@ -168,10 +232,12 @@ export const CanvasComponent = ({
     const { offsetX, offsetY } = e.nativeEvent
     contextRef.current.lineTo(offsetX * 2, offsetY * 2)
     contextRef.current.stroke()
-    setDrawStack((prev) => {
-      prev[prev.length - 1].path.push({ x: offsetX * 2, y: offsetY * 2 })
-      return [...prev]
-    })
+    // setDrawStack((prev) => {
+    //   prev[prev.length - 1].path.push({ x: offsetX * 2, y: offsetY * 2 })
+    //   return [...prev]
+    // })
+
+    redrawStack.current && redrawStack.current.trackPath(offsetX, offsetY)
 
     socket.emit('draw', {
       offsetX: offsetX / canvasRef.current.width,
@@ -206,7 +272,8 @@ export const CanvasComponent = ({
 
   const clearCanvas = useCallback(
     (withEmit) => {
-      setDrawStack([])
+      //   setDrawStack([])
+      redrawStack.current && redrawStack.current.clearStack()
       contextRef.current.clearRect(
         0,
         0,
