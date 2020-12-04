@@ -28,9 +28,5 @@ export const RoomPage = () => {
     }
   })
 
-  return (
-    <div>
-      <GameMain socket={socket} roomid={roomid} />
-    </div>
-  )
+  return <GameMain socket={socket} roomid={roomid} />
 }

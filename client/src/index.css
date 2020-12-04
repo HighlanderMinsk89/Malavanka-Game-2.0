@@ -1,9 +1,15 @@
 html {
   box-sizing: border-box;
+  height: 100%;
 }
 
 body {
+
   width: 100%;
+  min-width: 252px;
+  max-height: 100vh;
+  min-height: 640px;
+  height: 100%;
 }
 
 @media only screen and (min-width: 1200px) {
@@ -24,15 +30,153 @@ body {
 
 #root {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .body-app {
   padding: 0 1rem 0 1rem;
+  flex-grow: 1;
 }
 
-.container {
-  width: 85%;
+.game-room-c {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+
+.game-info {
+  /* flex-grow: 2; */
+}
+
+.draw-cont {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.canvas-chat-cont {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-bottom: 1rem;
+}
+
+.canvas-tools-cont {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 3.5;
+  max-height: calc(840px + 3rem);
+}
+
+.canvas-cont-wrapper {
+  /* position: relative; */
+  width: 100%;
+  height: 100%;
+  max-height: 840px;
+  /* min-height: 500px; */
+  /* padding-top: 50%; */
+  background-color: chocolate;
+}
+
+.canvas-cont {
+  /* position: relative; */
+  display: flex;
+  flex-direction: column;
+  /* position: absolute; */
+}
+
+canvas {
+  position: absolute;
+  background-color: rgba(20, 1, 1) !important;
+  border: 2px solid rgb(49, 1, 1);
+  align-self: center;
+  /* flex-grow: 1; */
+}
+
+@media(min-width: 1200px) and (max-height: 900px) {
+  .canvas-chat-cont {
+    flex-direction: row;
+    width: 100%
+  }
+  .canvas-tools-cont {
+    flex-grow: 5 !important;
+    width: 80%;
+  }
+
+  .chat-container {
+    flex-grow: 2 !important;
+    margin-top: 0 !important;
+    margin-left: 1rem;
+    width: 20% !important
+  }
+}
+
+@media(max-width: 1199px) {
+  .canvas-cont-wrapper {
+    position: relative;
+    width: 100%;
+    /* height: 100%; */
+    padding-top: 70%;
+  }
+  
+  .canvas-cont {
+    position: absolute;
+    position: relative;
+  }
+  .canvas-tools-cont {
+    flex-grow: 0 !important;
+  }
+  .chat-container {
+    min-height: 80px !important;
+    flex-grow: 0 !important;
+  }
+}
+
+/* CHAT */
+
+.chat-container {
+  display: flex;
+  /* flex-grow: 1; */
+  width: 100%;
+  margin-top: 1rem; 
+  flex-direction: column;
+  min-height: 100px;
+  height: 250px;
+}
+
+.chat-box {
+  background-color: azure;
+  border: 2px solid rgb(85, 42, 165) ;
+  padding-right: .2rem;
+  flex-grow: 1;
+}
+
+.chat-form {
+  display: flex;
+  margin-top: 0.5rem;
+}
+
+.chat-form >input{
+  margin: 0 0.5rem 0 0 !important
+}
+
+
+.message {
+  display: flex;
+  margin: 0.3rem;
+  height: 1rem;
+}
+
+.message p {
+  margin-right: 0.3rem;
+}
+
+.message :nth-child(1) {
+  font-weight: bolder;
+}
+
 
 .modal {
   background-color: rgb(218, 51, 59);
@@ -106,53 +250,12 @@ body {
 
 
 /* _________________ROOM */
-.draw-cont {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
 
 
 
 
-/* CHAT */
 
-.chat-container {
-  display: flex;
-  flex-grow: 1;
-  width: 100%;
-  margin-top: 1rem; 
-  flex-direction: column;
-}
 
-.chat-box {
-  background-color: azure;
-  border: 2px solid rgb(85, 42, 165) ;
-  width: inherit;
-  height: 200px;
-  margin-right: 1rem;
-  flex-grow: 1;
-}
-
-.nicks {
-  display: flex;
-  margin-bottom: 0.5rem;
-  min-height: 2.5rem;
-}
-
-.message {
-  display: flex;
-  margin: 0.3rem;
-  height: 1rem;
-}
-
-.message p {
-  margin-right: 0.3rem;
-}
-
-.message :nth-child(1) {
-  font-weight: bolder;
-}
 
 /* ROOMS LIST */
 .rooms-container {
@@ -167,6 +270,10 @@ body {
   width: 70%;
   background-color: rgb(238, 238, 238);
   margin: 1rem;
+}
+
+.default-shadow {
+  box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
 }
 
 .room-row-cont img {
@@ -199,46 +306,17 @@ align-self: center;
 }
 
 /* CANVAS_________ */
-.canvas-cont {
-  display: flex;
-  flex-direction: column;
-}
 
-/* @media only screen and (max-width: 1400px) {
-  canvas {
-  width: 100vw !important;
-  max-width: 100% !important;
-  height: 100vw !important;
-  }
-} */
-
-/* .c-canvas { */
-  /* flex-grow: 3; */
-  /* width: 100% ; */
-  /* max-width: 1000px !important; */
-/* } */
-
-canvas {
-  background-color: rgba(243, 236, 236, 0.306) !important;
-  border: 2px solid rgb(49, 1, 1);
-
-}
-
-.nicks {
-  flex-grow: 2;
-}
 
 .edit-draw-cont {
   display: flex;
   flex-direction: row;
   margin-bottom: 1rem;
   align-items: center;
-  height: 100%;
 }
 
 .edit-draw-cont button {
 margin-right: 0.5rem;
-height: 100%;
 }
 
 .edit-colors {
@@ -246,7 +324,7 @@ height: 100%;
   flex-direction: row;
   flex-grow: 5;
   justify-content: space-between;
-  height: 40px;
+  height:2rem;
   margin-right: 0.5rem;
 }
 
@@ -255,7 +333,7 @@ height: 100%;
   flex-direction: row;
   flex-grow: 3;
   justify-content: space-between;
-  height: 40px;
+  height:2rem;
 }
 
 div[disabled] {
@@ -300,4 +378,14 @@ div[disabled] {
   background-color: cadetblue;
   text-align: center;
   letter-spacing: 2rem;
+}
+
+.blink-me {
+  animation: blinker 3s linear infinite
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import styled from 'styled-components'
 
 import { CanvasMain } from '../../components/canvas/CanvasMain'
 import { Chat } from '../../components/canvas/Chat'
@@ -32,19 +33,23 @@ export const GameMain = ({ socket, roomid }) => {
 
   return (
     <GameContext.Provider value={{ socket, roomid, yourTurn, gameState }}>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {!gameState.isPlaying ? (
-          <h5>Please Wait for other users to join</h5>
-        ) : (
-          <h5>ROUND: {gameState && gameState.round}</h5>
-        )}
+      <div className='game-room-c'>
+        <div className='game-info'>
+          {!gameState.isPlaying ? (
+            <h5 className='blink-me' style={{ alignSelf: 'center' }}>
+              Waiting for other users...
+            </h5>
+          ) : (
+            <h5>ROUND: {gameState && gameState.round}</h5>
+          )}
 
-        {gameState.isPlaying && gameState.word ? (
-          <div>
-            <RoundTimer />
-            <SecretWord word={gameState.word} yourTurn={yourTurn} />
-          </div>
-        ) : null}
+          {gameState.isPlaying && gameState.word ? (
+            <div>
+              <RoundTimer />
+              <SecretWord word={gameState.word} yourTurn={yourTurn} />
+            </div>
+          ) : null}
+        </div>
         {yourTurn &&
         gameState.roundFinished === false &&
         gameState.gameFinished === false &&
@@ -56,13 +61,15 @@ export const GameMain = ({ socket, roomid }) => {
         {gameState.gameFinished ? <GameResultsModal /> : null}
         <div className='draw-cont'>
           <RoomUsers />
-          <CanvasMain
-            socket={socket}
-            yourTurn={yourTurn}
-            isPlaying={gameState.isPlaying}
-          />
+          <div className='canvas-chat-cont'>
+            <CanvasMain
+              socket={socket}
+              yourTurn={yourTurn}
+              isPlaying={gameState.isPlaying}
+            />
+            <Chat />
+          </div>
         </div>
-        <Chat />
       </div>
     </GameContext.Provider>
   )

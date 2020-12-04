@@ -94,6 +94,7 @@ class Game {
   startRound() {
     this.users.forEach((user) => {
       Object.values(user)[0].roundPoints = 0
+      Object.values(user)[0].isTurnToDraw = false
     })
     this.round++
     this.roundFinished = false
@@ -102,6 +103,7 @@ class Game {
     this.activeUser = this.users[0]
     const active = Object.values(this.activeUser)[0]
     active.isTurnToDraw = true
+    Object.values(this.users[0]).isTurnToDraw = true
   }
 
   nextPlayer(skipped) {
@@ -127,6 +129,9 @@ class Game {
       this.roundFinished = true
     } else {
       this.activeUser = this.users[activeIdx + 1]
+
+      Object.values(this.users[activeIdx])[0].isTurnToDraw = false
+      Object.values(this.users[activeIdx + 1])[0].isTurnToDraw = true
       this.activeUser.isTurnToDraw = true
       this.word = null
     }

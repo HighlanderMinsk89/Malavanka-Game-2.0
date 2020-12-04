@@ -63,7 +63,7 @@ export const EditDrawTools = ({ socket, clearCanvas }) => {
                 lineweight={line}
                 onClick={onLineChange}
                 className='line-picker-dot'
-                style={{ width: line, height: line }}
+                style={{ width: line, height: line * 0.7 }}
               ></div>
             </div>
           )

@@ -7,7 +7,12 @@ import React, {
 } from 'react'
 import { CanvasContext } from '../../context/canvasContext'
 
-export const CanvasComponent = ({ socket, yourTurn }) => {
+export const CanvasComponent = ({
+  socket,
+  yourTurn,
+  contWidth,
+  contHeight,
+}) => {
   const [isDrawing, setIsDrawing] = useState(false)
   const {
     setColorSelected,
@@ -22,6 +27,15 @@ export const CanvasComponent = ({ socket, yourTurn }) => {
   const canvasRef = useRef(null)
   const contextRef = useRef(null)
   const socketRef = useRef(socket)
+
+  useEffect(() => {
+    console.log('width', contWidth)
+    console.log('height', contHeight)
+    if (canvasRef.current) {
+      canvasRef.current.style.width = contWidth
+      canvasRef.current.style.height = contHeight
+    }
+  }, [contWidth, contHeight])
 
   useEffect(() => {
     socketRef.current.on('startDrawingCli', ({ offsetX, offsetY }) => {
@@ -61,23 +75,13 @@ export const CanvasComponent = ({ socket, yourTurn }) => {
 
   const setCanvasDimensions = useCallback((image, prevW, prevH) => {
     const canvas = canvasRef.current
+    const containerHeight = contHeight
+    const containerWidth = contWidth
+    console.log('contHeight', containerHeight)
+    console.log('contWidth', containerWidth)
 
-    canvas.style.width = '100%'
-    const height = +window
-      .getComputedStyle(canvas, null)
-      .getPropertyValue('width')
-      .slice(0, -2)
-    canvas.style.height = height * 0.7 + 'px'
-    canvas.width =
-      +window
-        .getComputedStyle(canvas, null)
-        .getPropertyValue('width')
-        .slice(0, -2) * 2
-    canvas.height =
-      +window
-        .getComputedStyle(canvas, null)
-        .getPropertyValue('height')
-        .slice(0, -2) * 2
+    if (contHeight < contWidth * 0.7) {
+    }
 
     contextRef.current.lineCap = 'round'
 
@@ -109,7 +113,7 @@ export const CanvasComponent = ({ socket, yourTurn }) => {
     const context = canvas.getContext('2d')
     contextRef.current = context
     setCanvasDimensions()
-  }, [])
+  }, [setCanvasDimensions])
 
   useEffect(() => {
     if (contextRef.current) {
@@ -118,22 +122,22 @@ export const CanvasComponent = ({ socket, yourTurn }) => {
     }
   }, [colorSelected, lineSelected])
 
-  useEffect(() => {
-    const onResize = () => {
-      const image = new Image()
-      image.src = canvasRef.current.toDataURL()
+  //   useEffect(() => {
+  //     const onResize = () => {
+  //       const image = new Image()
+  //       image.src = canvasRef.current.toDataURL()
 
-      setCanvasDimensions(
-        image,
-        canvasRef.current.width,
-        canvasRef.current.height
-      )
-      contextRef.current.strokeStyle = colorSelected
-      contextRef.current.lineWidth = lineSelected
-    }
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [setCanvasDimensions, colorSelected, lineSelected])
+  //       setCanvasDimensions(
+  //         image,
+  //         canvasRef.current.width,
+  //         canvasRef.current.height
+  //       )
+  //       contextRef.current.strokeStyle = colorSelected
+  //       contextRef.current.lineWidth = lineSelected
+  //     }
+  //     window.addEventListener('resize', onResize)
+  //     return () => window.removeEventListener('resize', onResize)
+  //   }, [setCanvasDimensions, colorSelected, lineSelected])
 
   const startDrawing = (e) => {
     if (yourTurn) {

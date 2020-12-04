@@ -84,7 +84,7 @@ export const Chat = () => {
           disabled={yourTurn && gameState.isPlaying}
           value={message}
           type='text'
-          placeholder='Say something'
+          placeholder='Guess a word or send message'
           onChange={handleFormChange}
         />
         <button
