@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useCallback,
   useContext,
+  useMemo,
 } from 'react'
 import { CanvasContext } from '../../context/canvasContext'
 
@@ -14,6 +15,8 @@ export const CanvasComponent = ({
   contHeight,
 }) => {
   const [isDrawing, setIsDrawing] = useState(false)
+  const [drawStack, setDrawStack] = useState([])
+
   const {
     setColorSelected,
     setLineSelected,
@@ -29,15 +32,6 @@ export const CanvasComponent = ({
   const socketRef = useRef(socket)
 
   useEffect(() => {
-    console.log('width', contWidth)
-    console.log('height', contHeight)
-    if (canvasRef.current) {
-      canvasRef.current.style.width = contWidth
-      canvasRef.current.style.height = contHeight
-    }
-  }, [contWidth, contHeight])
-
-  useEffect(() => {
     socketRef.current.on('startDrawingCli', ({ offsetX, offsetY }) => {
       contextRef.current.beginPath()
       contextRef.current.moveTo(
@@ -47,9 +41,10 @@ export const CanvasComponent = ({
       setIsDrawing(true)
     })
 
-    socketRef.current.on('finishDrawingCli', () => {
+    socketRef.current.on('finishDrawingCli', (drawStack) => {
       setIsDrawing(false)
       contextRef.current.closePath()
+      setDrawStack(drawStack)
     })
 
     socketRef.current.on('drawCli', ({ offsetX, offsetY }) => {
@@ -73,47 +68,57 @@ export const CanvasComponent = ({
     })
   })
 
-  const setCanvasDimensions = useCallback((image, prevW, prevH) => {
-    const canvas = canvasRef.current
-    const containerHeight = contHeight
-    const containerWidth = contWidth
-    console.log('contHeight', containerHeight)
-    console.log('contWidth', containerWidth)
+  useEffect(() => {
+    let newCanvasStyleWidth
+    let newCanvasStyleHeight
+    if (canvasRef.current && contWidth) {
+      if (contHeight < contWidth * 0.7 && contHeight) {
+        newCanvasStyleHeight = contHeight
+        newCanvasStyleWidth = contHeight / 0.7
+      } else if (contHeight === 0) {
+        newCanvasStyleWidth = contWidth
+        newCanvasStyleHeight = contWidth * 0.7
+      }
 
-    if (contHeight < contWidth * 0.7) {
-    }
+      canvasRef.current.style.width = newCanvasStyleWidth + 'px'
+      canvasRef.current.style.height = newCanvasStyleHeight + 'px'
+      canvasRef.current.width = newCanvasStyleWidth * 2
+      canvasRef.current.height = newCanvasStyleHeight * 2
 
-    contextRef.current.lineCap = 'round'
-
-    if (image) {
-      image.onload = () => {
+      if (contextRef.current) {
+        contextRef.current.strokeStyle = colorSelected
+        contextRef.current.lineWidth = lineSelected
+      }
+      contextRef.current &&
         contextRef.current.clearRect(
           0,
           0,
           canvasRef.current.width,
           canvasRef.current.height
         )
-        contextRef.current.drawImage(
-          image,
-          0,
-          0,
-          canvas.width,
-          canvas.height,
-          0,
-          0,
-          (canvas.width * canvas.width) / prevW,
-          (canvas.height * canvas.height) / prevH
-        )
-      }
+      recreateDrawing(drawStack)
     }
-  }, [])
+  }, [contWidth, contHeight])
+
+  const setInitialCanvasSize = (canvas) => {
+    const wrapper = document.getElementsByClassName('canvas-cont-wrapper')[0]
+    const width = window
+      .getComputedStyle(wrapper, null)
+      .getPropertyValue('width')
+    const height = +width.slice(0, -2) * 0.7 + 'px'
+
+    canvas.style.width = width
+    canvas.style.height = height
+    canvas.width = +width.slice(0, -2) * 2
+    canvas.height = +height.slice(0, -2) * 2
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current
     const context = canvas.getContext('2d')
     contextRef.current = context
-    setCanvasDimensions()
-  }, [setCanvasDimensions])
+    setInitialCanvasSize(canvas)
+  }, [])
 
   useEffect(() => {
     if (contextRef.current) {
@@ -122,29 +127,24 @@ export const CanvasComponent = ({
     }
   }, [colorSelected, lineSelected])
 
-  //   useEffect(() => {
-  //     const onResize = () => {
-  //       const image = new Image()
-  //       image.src = canvasRef.current.toDataURL()
-
-  //       setCanvasDimensions(
-  //         image,
-  //         canvasRef.current.width,
-  //         canvasRef.current.height
-  //       )
-  //       contextRef.current.strokeStyle = colorSelected
-  //       contextRef.current.lineWidth = lineSelected
-  //     }
-  //     window.addEventListener('resize', onResize)
-  //     return () => window.removeEventListener('resize', onResize)
-  //   }, [setCanvasDimensions, colorSelected, lineSelected])
-
   const startDrawing = (e) => {
     if (yourTurn) {
       const { offsetX, offsetY } = e.nativeEvent
       contextRef.current.beginPath()
       contextRef.current.moveTo(offsetX * 2, offsetY * 2)
       setIsDrawing(true)
+      setDrawStack((prev) => [
+        ...prev,
+        {
+          x: offsetX * 2,
+          y: offsetY * 2,
+          path: [],
+          width: canvasRef.current.width,
+          height: canvasRef.current.height,
+          colorSelected,
+          lineSelected,
+        },
+      ])
 
       socket.emit('startDrawing', {
         roomid,
@@ -159,7 +159,7 @@ export const CanvasComponent = ({
       setIsDrawing(false)
       contextRef.current.closePath()
 
-      socket.emit('finishDrawing', { roomid })
+      socket.emit('finishDrawing', { roomid, drawStack })
     }
   }
 
@@ -168,6 +168,10 @@ export const CanvasComponent = ({
     const { offsetX, offsetY } = e.nativeEvent
     contextRef.current.lineTo(offsetX * 2, offsetY * 2)
     contextRef.current.stroke()
+    setDrawStack((prev) => {
+      prev[prev.length - 1].path.push({ x: offsetX * 2, y: offsetY * 2 })
+      return [...prev]
+    })
 
     socket.emit('draw', {
       offsetX: offsetX / canvasRef.current.width,
@@ -176,8 +180,33 @@ export const CanvasComponent = ({
     })
   }
 
+  const recreateDrawing = (stack) => {
+    const t0 = performance.now()
+    for (let line of stack) {
+      contextRef.current.strokeStyle = line.colorSelected
+      contextRef.current.lineWidth = line.lineSelected
+      contextRef.current.beginPath()
+      contextRef.current.moveTo(
+        (line.x * canvasRef.current.width) / line.width,
+        (line.y * canvasRef.current.height) / line.height
+      )
+
+      for (let draw of line.path) {
+        contextRef.current.lineTo(
+          (draw.x * canvasRef.current.width) / line.width,
+          (draw.y * canvasRef.current.height) / line.height
+        )
+        contextRef.current.stroke()
+      }
+      contextRef.current.closePath()
+    }
+    const t1 = performance.now()
+    console.log(t1 - t0)
+  }
+
   const clearCanvas = useCallback(
     (withEmit) => {
+      setDrawStack([])
       contextRef.current.clearRect(
         0,
         0,

@@ -24,7 +24,7 @@ body {
     max-width: 1200px;
   }
   .body-app {
-    padding: 0 !important;
+    margin: 0 !important;
   }
 }
 
@@ -36,7 +36,7 @@ body {
 }
 
 .body-app {
-  padding: 0 1rem 0 1rem;
+  margin: 0 1rem 0 1rem;
   flex-grow: 1;
 }
 
@@ -84,6 +84,8 @@ body {
   /* position: relative; */
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
   /* position: absolute; */
 }
 
@@ -95,7 +97,7 @@ canvas {
   /* flex-grow: 1; */
 }
 
-@media(min-width: 1200px) and (max-height: 900px) {
+@media(min-width: 1200px) and (max-height: 880px) {
   .canvas-chat-cont {
     flex-direction: row;
     width: 100%
@@ -109,21 +111,22 @@ canvas {
     flex-grow: 2 !important;
     margin-top: 0 !important;
     margin-left: 1rem;
-    width: 20% !important
+    width: 20% !important;
+    height: 100% !important
   }
 }
 
 @media(max-width: 1199px) {
   .canvas-cont-wrapper {
-    position: relative;
     width: 100%;
-    /* height: 100%; */
+    height: 100%;
     padding-top: 70%;
+    position: relative;
   }
   
   .canvas-cont {
     position: absolute;
-    position: relative;
+    top: 0
   }
   .canvas-tools-cont {
     flex-grow: 0 !important;

@@ -37,7 +37,15 @@ export const CanvasMain = ({ socket, yourTurn }) => {
             clearCanvas={clearCanvasWithButton}
           />
         ) : null}
-        <ReactResizeDetector handleWidth handleHeight targetRef={sizeWrapper}>
+        <ReactResizeDetector
+          handleWidth
+          handleHeight
+          targetRef={sizeWrapper}
+          skipOnMount={true}
+          refreshMode='debounce'
+          refreshRate={0}
+          // refreshOptions={{ trailing: true }}
+        >
           {({ width, height }) => (
             <div className='canvas-cont-wrapper' ref={sizeWrapper}>
               <div className='canvas-cont'>
