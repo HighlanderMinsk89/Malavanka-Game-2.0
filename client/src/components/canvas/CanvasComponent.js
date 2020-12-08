@@ -6,39 +6,7 @@ import React, {
   useContext,
 } from 'react'
 import { CanvasContext } from '../../context/canvasContext'
-
-class RedrawStack {
-  constructor() {
-    this.stack = []
-  }
-
-  clearStack() {
-    this.stack = []
-  }
-
-  addLine(offsetX, offsetY, canvasW, canvasH, colorSelected, lineSelected) {
-    const newLine = {
-      x: offsetX * 2,
-      y: offsetY * 2,
-      path: [],
-      width: canvasW,
-      height: canvasH,
-      colorSelected,
-      lineSelected,
-    }
-
-    this.stack.push(newLine)
-  }
-
-  trackPath(offsetX, offsetY) {
-    const line = this.stack[this.stack.length - 1]
-    line.path.push({ x: offsetX * 2, y: offsetY * 2 })
-  }
-
-  getStack() {
-    return this.stack
-  }
-}
+import RedrawStack from './redrawStack'
 
 export const CanvasComponent = ({
   socket,
@@ -74,10 +42,10 @@ export const CanvasComponent = ({
       setIsDrawing(true)
     })
 
-    socketRef.current.on('finishDrawingCli', () => {
+    socketRef.current.on('finishDrawingCli', (stack) => {
       setIsDrawing(false)
       contextRef.current.closePath()
-      //   setDrawStack(drawStack)
+      redrawStack.current.setStack(JSON.parse(stack))
     })
 
     socketRef.current.on('drawCli', ({ offsetX, offsetY }) => {
@@ -190,7 +158,10 @@ export const CanvasComponent = ({
       setIsDrawing(false)
       contextRef.current.closePath()
 
-      socket.emit('finishDrawing', { roomid })
+      socket.emit('finishDrawing', {
+        roomid,
+        stack: JSON.stringify(redrawStack.current.getStack()),
+      })
     }
   }
 

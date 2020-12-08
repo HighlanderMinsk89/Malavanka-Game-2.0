@@ -6,21 +6,22 @@ import { nameShortener } from '../../utils'
 
 const NicksChips = styled.div`
   display: flex;
+  flex-wrap: wrap;
   margin-bottom: 0.5rem;
-  height: 2rem;
   min-height: 2rem;
 `
 
 const NickChipCont = styled.div`
   position: relative;
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   align-items: center;
   background-color: ${(props) => (props.chipColor ? 'green' : 'red')};
   color: ${(props) => (props.chipColor ? 'black' : 'white')};
   border-radius: 13px;
-  height: 100%;
-  margin-right: 0.5rem;
+  height: 2rem;
+  margin-right: 0.3rem;
+  margin-bottom: 0.3rem;
 `
 
 const NickChipName = styled.p`

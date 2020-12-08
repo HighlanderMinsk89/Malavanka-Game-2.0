@@ -128,8 +128,8 @@ const socketForDrawing = (socket) => {
     socket.broadcast.to(roomid).emit('startDrawingCli', { offsetY, offsetX })
   })
 
-  socket.on('finishDrawing', ({ roomid, drawStack }) => {
-    socket.broadcast.to(roomid).emit('finishDrawingCli', drawStack)
+  socket.on('finishDrawing', ({ roomid, stack }) => {
+    socket.broadcast.to(roomid).emit('finishDrawingCli', stack)
   })
 
   socket.on('draw', ({ roomid, offsetX, offsetY }) => {

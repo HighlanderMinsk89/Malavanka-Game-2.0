@@ -64,6 +64,7 @@ export const Chat = () => {
       roomid,
       userName,
       correct: input === 'GUESSED THE WORD!',
+      socketId: socket.id,
     }
     socket.emit('send message', body)
 
@@ -72,7 +73,7 @@ export const Chat = () => {
 
   return (
     <div className='chat-container'>
-      <ChatBox messages={messages} />
+      <ChatBox messages={messages} socketId={socket.id} />
 
       <div className='chat-form'>
         <input

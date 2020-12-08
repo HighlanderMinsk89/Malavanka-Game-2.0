@@ -109,7 +109,6 @@ class Game {
   nextPlayer(skipped) {
     // bonus for active
     if (this.countMatch === this.users.length - 1) {
-      console.log('this.activeUser', this.activeUser)
       Object.values(this.activeUser)[0].points += this.roundTimer
       Object.values(this.activeUser)[0].roundPoints += this.roundTimer
     }
