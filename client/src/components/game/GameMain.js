@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
 
 import { CanvasMain } from '../../components/canvas/CanvasMain'
-import { Chat } from '../../components/canvas/Chat'
+import { Chat } from '../chat/Chat'
 import { GameContext } from '../../context/gameContext'
 import { RoomUsers } from '../canvas/RoomUsers'
 import { GameResultsModal } from './GameResultsModal'
 import { RoundResultsModal } from './RoundResultsModal'
-import { RoundTimer } from './RoundTimer'
 import { SecretWord } from './SecretWord'
 import { SelectWordModal } from './SelectWordModal'
 
@@ -36,19 +34,15 @@ export const GameMain = ({ socket, roomid }) => {
       <div className='game-room-c'>
         <div className='game-info'>
           {!gameState.isPlaying ? (
-            <h5 className='blink-me' style={{ alignSelf: 'center' }}>
-              Waiting for other users...
-            </h5>
+            <h5 className='blink-me'>Waiting for other users...</h5>
           ) : (
-            <h5>ROUND: {gameState && gameState.round}</h5>
-          )}
-
-          {gameState.isPlaying && gameState.word ? (
-            <div>
-              <RoundTimer />
-              <SecretWord word={gameState.word} yourTurn={yourTurn} />
+            <div className='round-word'>
+              <h5>ROUND {gameState && gameState.round}</h5>
+              {gameState.word ? (
+                <SecretWord word={gameState.word} yourTurn={yourTurn} />
+              ) : null}
             </div>
-          ) : null}
+          )}
         </div>
         {yourTurn &&
         gameState.roundFinished === false &&
@@ -66,6 +60,7 @@ export const GameMain = ({ socket, roomid }) => {
               socket={socket}
               yourTurn={yourTurn}
               isPlaying={gameState.isPlaying}
+              word={gameState.word}
             />
             <Chat />
           </div>

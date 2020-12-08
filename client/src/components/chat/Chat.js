@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
 import { GameContext } from '../../context/gameContext'
+import { ChatBox } from './ChatBox'
+import { ButtonStyled } from '../shared/Button'
 
 export const Chat = () => {
   const [messages, setMessages] = useState([])
@@ -53,7 +55,7 @@ export const Chat = () => {
   const handleSendMessage = () => {
     let input = message
     if (gameState.word && input === gameState.word.word) {
-      input = 'MATCH'
+      input = 'GUESSED THE WORD!'
       socket.emit('wordMatch', { roomid, socketId: socket.id })
     }
     const body = {
@@ -61,6 +63,7 @@ export const Chat = () => {
       location,
       roomid,
       userName,
+      correct: input === 'GUESSED THE WORD!',
     }
     socket.emit('send message', body)
 
@@ -69,16 +72,8 @@ export const Chat = () => {
 
   return (
     <div className='chat-container'>
-      <div className='chat-box'>
-        {messages.map((body, index) => {
-          return (
-            <div className='message' key={index}>
-              <p>{`${body.userName}: `}</p>
-              <p>{body.message}</p>
-            </div>
-          )
-        })}
-      </div>
+      <ChatBox messages={messages} />
+
       <div className='chat-form'>
         <input
           disabled={yourTurn && gameState.isPlaying}
@@ -87,13 +82,13 @@ export const Chat = () => {
           placeholder='Guess a word or send message'
           onChange={handleFormChange}
         />
-        <button
+        <ButtonStyled
           disabled={yourTurn && gameState.isPlaying}
-          className='btn is-success'
+          className='default-shadow'
           onClick={handleSendMessage}
         >
           Send
-        </button>
+        </ButtonStyled>
       </div>
     </div>
   )

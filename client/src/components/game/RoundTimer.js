@@ -1,5 +1,20 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
+import styled from 'styled-components'
 import { GameContext } from '../../context/gameContext'
+
+const ProgressBar = styled.div`
+  height: 10px;
+  width: 100%;
+  background-color: ${(props) => props.theme.darkBlue};
+  box-shadow: ${(props) => props.theme.bigShadow};
+`
+
+const ProgressInner = styled.div`
+  height: 100%;
+  width: ${(props) => props.completed};
+  background-color: ${(props) => props.theme.brightRed};
+  transition: width 2s ease-in-out;
+`
 
 export const RoundTimer = () => {
   const [timer, setTimer] = useState(30)
@@ -31,8 +46,8 @@ export const RoundTimer = () => {
   }, [socket, setTimer])
 
   return (
-    <div>
-      <h4>{timer} till next player</h4>
-    </div>
+    <ProgressBar>
+      <ProgressInner completed={`${(timer / 30) * 100}%`} />
+    </ProgressBar>
   )
 }

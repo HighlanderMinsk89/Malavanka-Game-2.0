@@ -74,10 +74,10 @@ export const CanvasComponent = ({
       setIsDrawing(true)
     })
 
-    socketRef.current.on('finishDrawingCli', (drawStack) => {
+    socketRef.current.on('finishDrawingCli', () => {
       setIsDrawing(false)
       contextRef.current.closePath()
-      setDrawStack(drawStack)
+      //   setDrawStack(drawStack)
     })
 
     socketRef.current.on('drawCli', ({ offsetX, offsetY }) => {
@@ -190,7 +190,7 @@ export const CanvasComponent = ({
       setIsDrawing(false)
       contextRef.current.closePath()
 
-      socket.emit('finishDrawing', { roomid, drawStack })
+      socket.emit('finishDrawing', { roomid })
     }
   }
 
@@ -230,7 +230,7 @@ export const CanvasComponent = ({
       contextRef.current.closePath()
     }
     const t1 = performance.now()
-    console.log(t1 - t0)
+    // console.log(t1 - t0)
   }
 
   const clearCanvas = useCallback(

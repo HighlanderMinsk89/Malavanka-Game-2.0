@@ -4,8 +4,9 @@ import { CanvasComponent } from './CanvasComponent'
 import { EditDrawTools } from './EditDrawTools'
 import { CanvasContext } from '../../context/canvasContext'
 import ReactResizeDetector from 'react-resize-detector'
+import { RoundTimer } from '../game/RoundTimer'
 
-export const CanvasMain = ({ socket, yourTurn }) => {
+export const CanvasMain = ({ socket, yourTurn, isPlaying, word }) => {
   const [colorSelected, setColorSelected] = useState('red')
   const [lineSelected, setLineSelected] = useState(4)
   const [clear, setClear] = useState(false)
@@ -37,6 +38,7 @@ export const CanvasMain = ({ socket, yourTurn }) => {
             clearCanvas={clearCanvasWithButton}
           />
         ) : null}
+        {/* {isPlaying && word ? <RoundTimer /> : null} */}
         <ReactResizeDetector
           handleWidth
           handleHeight
@@ -49,6 +51,12 @@ export const CanvasMain = ({ socket, yourTurn }) => {
           {({ width, height }) => (
             <div className='canvas-cont-wrapper' ref={sizeWrapper}>
               <div className='canvas-cont'>
+                {isPlaying && word ? (
+                  <div className='canvas-cont-info'>
+                    <RoundTimer />
+                  </div>
+                ) : null}
+
                 <CanvasComponent
                   socket={socket}
                   yourTurn={yourTurn}

@@ -8,6 +8,7 @@ const NicksChips = styled.div`
   display: flex;
   margin-bottom: 0.5rem;
   height: 2rem;
+  min-height: 2rem;
 `
 
 const NickChipCont = styled.div`

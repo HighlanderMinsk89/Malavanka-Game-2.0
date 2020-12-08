@@ -7,6 +7,19 @@ import { AuthContext } from './context/authContext'
 import { SocketContext } from './context/socketContext'
 import { useSocketIO } from './hooks/useSocketIO'
 
+import styled, { ThemeProvider } from 'styled-components'
+
+const theme = {
+  darkBlue: '#2B2D42',
+  lightGrey: '#8D99AE',
+  white: '#EDF2F4',
+  brightRed: '#EF233C',
+  red: '#D90429',
+  green: '#2d6a4f',
+  bigShadow: '4px 4px 15px #2B2D42',
+  shadow: '1.5px 1.5px 1.5px #2B2D42',
+}
+
 function App() {
   const {
     login,
@@ -42,8 +55,10 @@ function App() {
     >
       <SocketContext.Provider value={{ socket, yourId }}>
         <Router>
-          <Navbar />
-          <div className='body-app'>{routes}</div>
+          <ThemeProvider theme={theme}>
+            <Navbar />
+            <div className='body-app'>{routes}</div>
+          </ThemeProvider>
         </Router>
       </SocketContext.Provider>
     </AuthContext.Provider>
