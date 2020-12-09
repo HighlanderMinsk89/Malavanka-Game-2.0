@@ -23,40 +23,6 @@ export const ButtonStyled = styled.button`
   }
 
   &:focus:hover {
-    /* border: 2px solid ${(props) => props.theme.darkBlue}; */
     background-color: ${(props) => props.theme.red};
   }
 `
-
-// export const ButtonStyledDiv = styled.div`
-//   background: yellow;
-//   box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.5);
-//   display: inline-block;
-//   font-size: 2em;
-//   padding: 0.5em 2em;
-//   text-decoration: none;
-//   transform: skew(-20deg);
-
-//   &:hover {
-//     background-color: red;
-//   }
-
-//   &:active {
-//     position: relative;
-//     top: 10px;
-//     left: 10px;
-//     box-shadow: none;
-//   }
-// `
-// const StyledButtonText = styled.span`
-//   display: inline-block;
-//   transform: skew(20deg);
-// `
-
-// export const StyledButton = ({ buttonText }) => {
-//   return (
-//     <ButtonStyledDiv>
-//       <StyledButtonText>{buttonText}</StyledButtonText>
-//     </ButtonStyledDiv>
-//   )
-// }

@@ -7,7 +7,7 @@ const socketForGame = (io, socket) => {
 
   socket.on('wordSelected', ({ selectedWord, roomid }) => {
     if (roomsAndUsers[roomid]) {
-      roomsAndUsers[roomid].word = selectedWord
+      roomsAndUsers[roomid].setWord(selectedWord)
       roomsAndUsers[roomid].roundTimer = 30
       io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
       socket.emit('clearCanvasBeforeGame')
@@ -63,6 +63,7 @@ const socketForGame = (io, socket) => {
     if (roomsAndUsers[roomid]) {
       roomsAndUsers[roomid].setRoundTimer()
       io.to(roomid).emit('roundTimerUpdate', roomsAndUsers[roomid].roundTimer)
+      io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
     }
   })
 

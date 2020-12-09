@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styled, { keyframes } from 'styled-components/macro'
+import { GameContext } from '../../../context/gameContext'
 
 const blinkWord = keyframes`
   50% {
@@ -29,11 +30,26 @@ const StyledSecretWord = styled.div`
   }
 `
 
-export const SecretWord = ({ word, yourTurn }) => {
-  word = !yourTurn ? word.word.replace(/./gi, '_') : word.word
+export const SecretWord = ({ yourTurn }) => {
+  const { gameState } = useContext(GameContext)
+  const { wordToShow } = gameState
+  const word = gameState.word?.word
+  console.log('word', word)
+  console.log('wordToShow', wordToShow)
+
+  const [wordToDisplay, setWordToDisplay] = useState('')
+
+  useEffect(() => {
+    if (yourTurn) {
+      setWordToDisplay(word)
+    } else {
+      setWordToDisplay(wordToShow)
+    }
+  }, [gameState, yourTurn])
+
   return (
     <StyledSecretWord>
-      <p>{word}</p>
+      <p>{wordToDisplay}</p>
     </StyledSecretWord>
   )
 }

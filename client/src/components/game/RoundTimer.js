@@ -17,8 +17,9 @@ const ProgressInner = styled.div`
 `
 
 export const RoundTimer = () => {
-  const [timer, setTimer] = useState(30)
-  const { roomid, socket, yourTurn } = useContext(GameContext)
+  const { roomid, socket, yourTurn, gameState } = useContext(GameContext)
+  const roundTimer = gameState.roundTimer
+  const [timer, setTimer] = useState(roundTimer)
 
   let interval = useRef()
   useEffect(() => {
@@ -35,15 +36,8 @@ export const RoundTimer = () => {
   }, [timer, socket, roomid, yourTurn])
 
   useEffect(() => {
-    const socketCopy = socket
-    const listener = (seconds) => {
-      setTimer(seconds)
-    }
-    socket.on('roundTimerUpdate', listener)
-    return () => {
-      socketCopy.removeListener('roundTimeUpdate', listener)
-    }
-  }, [socket, setTimer])
+    setTimer(roundTimer)
+  }, [roundTimer])
 
   return (
     <ProgressBar>

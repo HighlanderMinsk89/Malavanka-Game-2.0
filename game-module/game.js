@@ -1,3 +1,4 @@
+const { revealWord } = require('../utils/utils')
 const roomsAndUsers = {}
 
 class Game {
@@ -6,6 +7,7 @@ class Game {
     this.users = [user]
     this.activeUser = null
     this.word = null
+    this.wordToShow = null
     this.isPlaying = false
     this.allChoseCorrectWord = false
     this.round = 0
@@ -21,10 +23,18 @@ class Game {
 
   setWord(word) {
     this.word = word
+    this.word.word = this.word.word.toUpperCase()
+    this.wordToShow = this.word.word.replace(/./gi, '_')
   }
 
   setRoundTimer() {
-    this.roundTimer--
+    --this.roundTimer
+    if (
+      this.roundTimer === 45 ||
+      this.roundTimer === 30 ||
+      this.roundTimer === 15
+    )
+      this.wordToShow = revealWord(this.word.word, this.wordToShow)
   }
 
   addUser(user) {
@@ -36,6 +46,7 @@ class Game {
   setDefaultGame() {
     this.activeUser = null
     this.word = null
+    this.wordToShow = null
     this.isPlaying = false
     this.allChoseCorrectWord = false
     this.round = 0
@@ -99,6 +110,7 @@ class Game {
     this.round++
     this.roundFinished = false
     this.word = null
+    this.wordToShow = null
     this.allChoseCorrectWord = false
     this.activeUser = this.users[0]
     const active = Object.values(this.activeUser)[0]
@@ -133,6 +145,7 @@ class Game {
       Object.values(this.users[activeIdx + 1])[0].isTurnToDraw = true
       this.activeUser.isTurnToDraw = true
       this.word = null
+      this.wordToShow = null
     }
   }
 
@@ -165,6 +178,7 @@ class Game {
   finishGame() {
     this.round = 0
     this.word = null
+    this.wordToShow = 0
     this.gameFinished = true
   }
 }
