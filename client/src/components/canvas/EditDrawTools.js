@@ -1,9 +1,78 @@
 import React, { useContext } from 'react'
+import styled, { css } from 'styled-components/macro'
 import { CanvasContext } from '../../context/canvasContext'
 import { ButtonStyled } from '../shared/Button'
 
-const colors = ['red', 'purple', 'white', 'green', 'yellow', 'blue', 'brown']
+const colors = [
+  '#d90429',
+  '#4f008d',
+  '#38b000',
+  '#f3de2c',
+  '#0077b6',
+  '#774936',
+  '#e85d04',
+  '#212529',
+  '#f8f9fa',
+]
 const lineWeight = [4, 10, 18, 28, 36]
+
+const ToolsContainer = styled.div`
+  display: flex;
+  margin-bottom: 0.5rem;
+  align-items: center;
+
+  & button {
+    margin-right: 0.5rem;
+    height: 2rem;
+  }
+`
+
+const EditColorsContainer = styled.div`
+  display: flex;
+  flex-basis: 60%;
+  justify-content: space-between;
+  height: 2rem;
+  margin-right: 0.5rem;
+`
+
+const ColorPicker = styled.div`
+  background-color: ${(props) => props.color};
+  border-radius: 3px;
+  width: 10%;
+  margin-left: 0.3rem;
+  box-shadow: 4px 4px 0 ${(props) => props.theme.lightGrey};
+  transform: skew(-20deg);
+
+  ${(props) =>
+    props.isActive
+      ? css`
+          position: relative;
+          top: 4px;
+          left: 4px;
+          box-shadow: none;
+          margin-right: 0.3rem;
+        `
+      : null}
+`
+
+const EditLineContainer = styled(EditColorsContainer)`
+  flex-basis: 40%;
+  margin-left: 0.5rem;
+`
+const LinePicker = styled(ColorPicker)`
+  background-color: ${(props) => props.theme.darkBlue};
+  width: 17%;
+  display: flex;
+  justify-content: center;
+`
+
+const LinePickerDot = styled.div`
+  background-color: ${(props) => props.theme.white};
+  border-radius: 50%;
+  align-self: center;
+  width: ${(props) => props.line * 0.7 + 'px'};
+  height: ${(props) => props.line * 0.7 + 'px'};
+`
 
 export const EditDrawTools = ({ socket, clearCanvas }) => {
   const {
@@ -14,57 +83,46 @@ export const EditDrawTools = ({ socket, clearCanvas }) => {
     roomid,
   } = useContext(CanvasContext)
 
-  const onColorChange = (e) => {
-    const newColor = e.target.getAttribute('color')
+  const onColorChange = (newColor) => {
     setColorSelected(newColor)
     socket.emit('colorChange', { newColor, roomid })
   }
 
-  const onLineChange = (e) => {
-    const newLine = +e.target.getAttribute('lineweight')
+  const onLineChange = (newLine) => {
     setLineSelected(newLine)
     socket.emit('lineChange', { newLine, roomid })
   }
 
   return (
-    <div className='edit-draw-cont'>
+    <ToolsContainer>
       <ButtonStyled onClick={clearCanvas}>Clear</ButtonStyled>
-      <div className='edit-colors'>
+      <EditColorsContainer>
         {colors.map((color) => {
+          const isActive = color === colorSelected
           return (
-            <div
-              className={`color-picker ${
-                colorSelected === color ? 'color-selected' : ''
-              }`}
-              key={color}
-              style={{ backgroundColor: color }}
-              onClick={onColorChange}
+            <ColorPicker
               color={color}
-            ></div>
+              key={color}
+              isActive={isActive}
+              onClick={() => onColorChange(color)}
+            />
           )
         })}
-      </div>
-      <div className='edit-line'>
+      </EditColorsContainer>
+      <EditLineContainer>
         {lineWeight.map((line) => {
+          const isActive = line === lineSelected
           return (
-            <div
+            <LinePicker
+              isActive={isActive}
               key={line}
-              lineweight={line}
-              onClick={onLineChange}
-              className={`line-picker ${
-                lineSelected === line ? 'color-selected' : ''
-              }`}
+              onClick={() => onLineChange(line)}
             >
-              <div
-                lineweight={line}
-                onClick={onLineChange}
-                className='line-picker-dot'
-                style={{ width: line, height: line * 0.7 }}
-              ></div>
-            </div>
+              <LinePickerDot line={line} />
+            </LinePicker>
           )
         })}
-      </div>
-    </div>
+      </EditLineContainer>
+    </ToolsContainer>
   )
 }

@@ -7,7 +7,7 @@ import ReactResizeDetector from 'react-resize-detector'
 import { RoundTimer } from '../game/RoundTimer'
 
 export const CanvasMain = ({ socket, yourTurn, isPlaying, word }) => {
-  const [colorSelected, setColorSelected] = useState('red')
+  const [colorSelected, setColorSelected] = useState('#d90429')
   const [lineSelected, setLineSelected] = useState(4)
   const [clear, setClear] = useState(false)
   const { roomid } = useParams()

@@ -221,7 +221,7 @@ export const CanvasComponent = ({
   useEffect(() => {
     socket.on('clearCanvasBeforeGame', () => {
       clearCanvas(true)
-      socket.emit('colorChange', { newColor: 'red', roomid })
+      socket.emit('colorChange', { newColor: '#d90429', roomid })
       socket.emit('lineChange', { newLine: 4, roomid })
     })
   }, [clearCanvas, roomid, socket])

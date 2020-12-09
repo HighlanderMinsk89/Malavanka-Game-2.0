@@ -45,7 +45,7 @@ export const RoomsPage = () => {
     <div>
       <h1 className='center-align'>Select Room</h1>
       <ul className='rooms-container'>
-        {rooms.map((room) => (
+        {rooms?.map((room) => (
           <RoomCard
             key={room._id}
             room={room}
