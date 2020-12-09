@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { CanvasContext } from '../../context/canvasContext'
+import { ButtonStyled } from '../shared/Button'
 
 const colors = ['red', 'purple', 'white', 'green', 'yellow', 'blue', 'brown']
 const lineWeight = [4, 10, 18, 28, 36]
@@ -27,12 +28,7 @@ export const EditDrawTools = ({ socket, clearCanvas }) => {
 
   return (
     <div className='edit-draw-cont'>
-      <button
-        onClick={clearCanvas}
-        className='btn btn-small waves-effect waves-light red'
-      >
-        Clear
-      </button>
+      <ButtonStyled onClick={clearCanvas}>Clear</ButtonStyled>
       <div className='edit-colors'>
         {colors.map((color) => {
           return (

@@ -6,7 +6,6 @@ import { GameContext } from '../../context/gameContext'
 import { RoomUsers } from '../canvas/RoomUsers'
 import { GameResultsModal } from './GameResultsModal'
 import { RoundResultsModal } from './RoundResultsModal'
-import { SecretWord } from './game_info/SecretWord'
 import { SelectWordModal } from './SelectWordModal'
 import { GameInfo } from './game_info/GameInfo'
 
@@ -33,18 +32,6 @@ export const GameMain = ({ socket, roomid }) => {
   return (
     <GameContext.Provider value={{ socket, roomid, yourTurn, gameState }}>
       <div className='game-room-c'>
-        {/* <div className='game-info'>
-          {!gameState.isPlaying ? (
-            <h5 className='blink-me'>Waiting for other users...</h5>
-          ) : (
-            <div className='round-word'>
-              <h5>ROUND {gameState && gameState.round}</h5>
-              {gameState.word ? (
-                <SecretWord word={gameState.word} yourTurn={yourTurn} />
-              ) : null}
-            </div>
-          )}
-        </div> */}
         <GameInfo gameState={gameState} yourTurn={yourTurn} />
         {yourTurn &&
         gameState.roundFinished === false &&

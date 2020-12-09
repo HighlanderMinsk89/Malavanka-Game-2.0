@@ -53,22 +53,25 @@ export const Chat = () => {
   }
 
   const handleSendMessage = () => {
-    let input = message
-    if (gameState.word && input === gameState.word.word) {
-      input = 'GUESSED THE WORD!'
-      socket.emit('wordMatch', { roomid, socketId: socket.id })
-    }
-    const body = {
-      message: input,
-      location,
-      roomid,
-      userName,
-      correct: input === 'GUESSED THE WORD!',
-      socketId: socket.id,
-    }
-    socket.emit('send message', body)
+    if (message.length) {
+      let input = message
+      if (gameState.word && input === gameState.word.word) {
+        input = 'GUESSED THE WORD!'
+        socket.emit('wordMatch', { roomid, socketId: socket.id })
+      }
+      const body = {
+        message: input,
+        location,
+        roomid,
+        userName,
+        correct: input === 'GUESSED THE WORD!',
+        socketId: socket.id,
+      }
 
-    setMessage('')
+      socket.emit('send message', body)
+
+      setMessage('')
+    }
   }
 
   return (
@@ -85,7 +88,6 @@ export const Chat = () => {
         />
         <ButtonStyled
           disabled={yourTurn && gameState.isPlaying}
-          className='default-shadow'
           onClick={handleSendMessage}
         >
           Send

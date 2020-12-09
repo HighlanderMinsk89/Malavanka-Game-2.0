@@ -41,13 +41,17 @@ const StyledChatMessage = styled.div`
   }
 `
 
-const ChatMessage = ({ userName, message, correct }) => {
+const ChatMessage = ({ userName, message, correct, yourMessage }) => {
   return (
     <StyledChatMessage correct={correct}>
-      <p>
-        <em>{userName}: </em>
-        {message}
-      </p>
+      {correct ? (
+        <p>{`${yourMessage ? 'YOU' : userName} GUESSED THE WORD!`}</p>
+      ) : (
+        <p>
+          <em>{userName}: </em>
+          {message}
+        </p>
+      )}
     </StyledChatMessage>
   )
 }
@@ -76,6 +80,7 @@ export const ChatBox = ({ messages, socketId }) => {
                 correct={body.correct}
                 userName={nameShortener(body.userName)}
                 message={body.message}
+                yourMessage={yourMessage}
               />
             </ChatMessageWrapper>
           )

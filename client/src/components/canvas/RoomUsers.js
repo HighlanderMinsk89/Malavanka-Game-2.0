@@ -14,38 +14,38 @@ const NicksChips = styled.div`
 const NickChipCont = styled.div`
   position: relative;
   display: flex;
-  /* flex-wrap: wrap; */
   align-items: center;
-  background-color: ${(props) => (props.chipColor ? 'green' : 'red')};
-  color: ${(props) => (props.chipColor ? 'black' : 'white')};
-  border-radius: 13px;
+  background-color: ${(props) =>
+    props.chipColor ? props.theme.green : props.theme.red};
+  color: ${(props) => props.theme.darkBlue};
+  border-radius: 3px;
   height: 2rem;
   margin-right: 0.3rem;
   margin-bottom: 0.3rem;
 `
 
 const NickChipName = styled.p`
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: bolder;
   padding: 0 0.5rem;
   margin: 0;
 `
 
 const NickChipPoints = styled(NickChipName)`
-  background-color: black;
-  border-radius: 0 12px 12px 0;
-  color: white;
+  background-color: ${(props) => props.theme.darkBlue};
+  border-radius: 0 3px 3px 0;
+  color: ${(props) => props.theme.white};
   font-size: 14px;
   line-height: 2rem;
 `
 
 const BrushActive = styled.div`
   height: 100%;
-  background-color: black;
-  border-radius: 12px 0 0 12px;
+  background-color: ${(props) => props.theme.darkBlue};
+  border-radius: 3px 0 0 3px;
 
   & i {
-    color: lime;
+    color: limegreen;
     padding: 0.1rem 0.1rem 0 0.1rem;
   }
 `
