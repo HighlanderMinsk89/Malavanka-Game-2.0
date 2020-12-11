@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
 import { GameContext } from '../../context/gameContext'
 import { ChatBox } from './ChatBox'
-import { ButtonStyled } from '../shared/Button'
+import { ButtonStyled, StyledButton } from '../shared/Button'
 
 export const Chat = () => {
   const [messages, setMessages] = useState([])
@@ -25,7 +25,6 @@ export const Chat = () => {
     socket.on('clearChat', () => {
       if (messages.length >= 50) {
         setMessages([])
-        console.log('messages', messages)
       }
     })
 
@@ -63,7 +62,7 @@ export const Chat = () => {
   const handleSendMessage = () => {
     if (message.length) {
       let input = message
-      if (gameState.word && input === gameState.word.word) {
+      if (gameState.word && input.toUpperCase() === gameState.word.word) {
         input = 'GUESSED THE WORD!'
         socket.emit('wordMatch', { roomid, socketId: socket.id })
       }
@@ -94,12 +93,15 @@ export const Chat = () => {
           placeholder='Guess a word or send message'
           onChange={handleFormChange}
         />
-        <ButtonStyled
+        <StyledButton
           disabled={yourTurn && gameState.isPlaying}
-          onClick={handleSendMessage}
+          onPress={handleSendMessage}
         >
-          Send
-        </ButtonStyled>
+          <span>
+            {' '}
+            <i className='small material-icons'>send</i>
+          </span>
+        </StyledButton>
       </div>
     </div>
   )

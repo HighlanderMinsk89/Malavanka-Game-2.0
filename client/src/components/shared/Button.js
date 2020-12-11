@@ -26,3 +26,40 @@ export const ButtonStyled = styled.button`
     background-color: ${(props) => props.theme.red};
   }
 `
+const StyledCustomButton = styled.div`
+  transform: skew(-20deg);
+  box-shadow: 4px 4px 0 ${(props) => props.theme.lightGrey};
+  background-color: ${(props) => props.theme.darkBlue};
+  color: ${(props) => props.theme.white};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4em;
+  height: 100%;
+  position: relative;
+  margin: 0 0.5em;
+  border-radius: 3px;
+
+  & span {
+    padding: 0.5em 0.6em 0 0.5em;
+    font-weight: bolder;
+    position: relative;
+  }
+
+  &:hover {
+    background-color: ${(props) => props.theme.red};
+    color: ${(props) => props.theme.darkBlue};
+    cursor: pointer;
+  }
+
+  &:active {
+    position: relative;
+    top: 4px;
+    left: 4px;
+    box-shadow: none;
+  }
+`
+
+export const StyledButton = ({ children, onPress }) => {
+  return <StyledCustomButton onClick={onPress}>{children}</StyledCustomButton>
+}

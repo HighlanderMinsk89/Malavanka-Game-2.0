@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { CanvasContext } from '../../context/canvasContext'
-import { ButtonStyled } from '../shared/Button'
+import { ButtonStyled, StyledButton } from '../shared/Button'
 
 const colors = [
   '#d90429',
@@ -95,7 +95,11 @@ export const EditDrawTools = ({ socket, clearCanvas }) => {
 
   return (
     <ToolsContainer>
-      <ButtonStyled onClick={clearCanvas}>Clear</ButtonStyled>
+      <StyledButton onPress={clearCanvas} style={{ color: 'green' }}>
+        <span>
+          <i className='small material-icons'>delete_sweep</i>
+        </span>
+      </StyledButton>
       <EditColorsContainer>
         {colors.map((color) => {
           const isActive = color === colorSelected

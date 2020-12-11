@@ -9,7 +9,6 @@ export const useSocketIO = () => {
     socketRef.current = io.connect('/', { forceNew: true })
     socketRef.current.on('your id', (id) => {
       setYourId(id)
-      console.log('USEREF HOOK. YOUR ID ---->', id)
     })
   }, [setYourId])
 

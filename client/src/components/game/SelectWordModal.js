@@ -17,8 +17,6 @@ export const SelectWordModal = ({ socket, roomid }) => {
   }, [request])
 
   const handleClickWordSelected = (word) => (e) => {
-    console.log('word', word)
-    e.preventDefault()
     setSelectedWord(word)
     socket.emit('wordSelected', {
       selectedWord: word,

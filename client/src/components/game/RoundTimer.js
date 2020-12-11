@@ -40,7 +40,7 @@ export const RoundTimer = () => {
       }, 1000)
     }
     return () => clearInterval(interval.current)
-  }, [timer, socket, roomid, yourTurn])
+  }, [timer, socket, roomid, yourTurn, secretWord])
 
   useEffect(() => {
     setTimer(roundTimer)

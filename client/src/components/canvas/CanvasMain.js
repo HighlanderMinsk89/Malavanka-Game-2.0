@@ -5,8 +5,16 @@ import { EditDrawTools } from './EditDrawTools'
 import { CanvasContext } from '../../context/canvasContext'
 import ReactResizeDetector from 'react-resize-detector'
 import { RoundTimer } from '../game/RoundTimer'
+import { WhoIsPickingWordMessage } from '../game/game_info/GameInfo'
 
-export const CanvasMain = ({ socket, yourTurn, isPlaying, word }) => {
+export const CanvasMain = ({
+  socket,
+  yourTurn,
+  isPlaying,
+  word,
+  isRoundFinished,
+  activeUserName,
+}) => {
   const [colorSelected, setColorSelected] = useState('#d90429')
   const [lineSelected, setLineSelected] = useState(4)
   const [clear, setClear] = useState(false)
@@ -55,6 +63,14 @@ export const CanvasMain = ({ socket, yourTurn, isPlaying, word }) => {
                   <div className='canvas-cont-info'>
                     <RoundTimer />
                   </div>
+                ) : null}
+
+                {isPlaying && !word && !isRoundFinished && !yourTurn ? (
+                  <WhoIsPickingWordMessage className='blink-me'>
+                    <p>
+                      <em>{activeUserName}</em> выбірае, што будзе маляваць...
+                    </p>
+                  </WhoIsPickingWordMessage>
                 ) : null}
 
                 <CanvasComponent

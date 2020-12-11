@@ -26,7 +26,6 @@ router.post('/newroom', async (req, res) => {
 router.post('/addwordstoroom', async (req, res) => {
   try {
     const room = await Room.findById('5fd2919af634583234760145')
-    console.log('room', room)
 
     const newWord = new Word({
       author: 'kupala',
@@ -35,7 +34,6 @@ router.post('/addwordstoroom', async (req, res) => {
       word_ru: 'кусок',
       word_en: 'piece',
     })
-    console.log('newWord', newWord)
 
     await newWord.save()
 
@@ -56,13 +54,12 @@ router.post('/addwordstoroom', async (req, res) => {
   }
 })
 
-router.get('/test', async (req, res) => {
-  try {
-    const room = await Room.findById('5fd279770199ba7adc2e853c')
-    console.log(room.words[0])
-    res.json(room.words[0])
-  } catch (error) {}
-})
+// router.get('/test', async (req, res) => {
+//   try {
+//     const room = await Room.findById('5fd279770199ba7adc2e853c')
+//     res.json(room.words[0])
+//   } catch (error) {}
+// })
 
 router.get('/allrooms', async (req, res) => {
   try {

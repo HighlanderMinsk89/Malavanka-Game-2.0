@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Row, Col, CardPanel } from 'react-materialize'
+import { Modal } from 'react-materialize'
 import { Loader } from '../Loader'
-// import hintImage from '../../../public/question.png'
 
-import styled, { css, keyframes } from 'styled-components/macro'
+import styled, { keyframes } from 'styled-components/macro'
 
 const StyledSelectWordModal = styled.div`
   width: 100%;

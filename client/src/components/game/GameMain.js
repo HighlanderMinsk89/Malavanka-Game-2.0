@@ -8,10 +8,17 @@ import { GameResultsModal } from './GameResultsModal'
 import { RoundResultsModal } from './RoundResultsModal'
 import { SelectWordModal } from './SelectWordModal'
 import { GameInfo } from './game_info/GameInfo'
+import { nameShortener } from '../../utils'
 
 export const GameMain = ({ socket, roomid }) => {
   const [gameState, setGameState] = useState({})
   const [yourTurn, setYourTurn] = useState(false)
+
+  let activeUserName
+  if (gameState.activeUser)
+    activeUserName = nameShortener(
+      Object.values(gameState.activeUser)[0].userName
+    )
 
   useEffect(() => {
     const callback = (newState) => {
@@ -50,6 +57,8 @@ export const GameMain = ({ socket, roomid }) => {
               yourTurn={yourTurn}
               isPlaying={gameState.isPlaying}
               word={gameState.word}
+              isRoundFinished={gameState.roundFinished}
+              activeUserName={activeUserName}
             />
             <Chat />
           </div>

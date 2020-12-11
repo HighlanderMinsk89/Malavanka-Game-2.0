@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/macro'
 import { SecretWord } from './SecretWord'
-import { nameShortener } from '../../../utils'
 
 const StyledGameInfo = styled.div`
   display: flex;
@@ -45,25 +44,26 @@ const RoundInfo = styled.div`
   }
 `
 
-const WhoIsPickingWordMessage = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+export const WhoIsPickingWordMessage = styled.div`
+  position: absolute;
+  height: 2em;
+  width: fit-content;
+  background-color: ${(props) => props.theme.darkBlue};
+  left: 2%;
+  top: 2%;
+  z-index: 100;
+  box-shadow: ${(props) => props.theme.shadow};
 
   & p {
-    color: ${(props) => props.theme.darkBlue};
-    padding: 0 0.5em;
+    color: ${(props) => props.theme.white};
+    padding: 0.2em 0.8em;
+    margin: 0;
     font-size: 1.2em;
     font-style: italic;
   }
 `
 
 export const GameInfo = ({ gameState, yourTurn }) => {
-  let activeUserName
-  if (gameState.activeUser)
-    activeUserName = Object.values(gameState.activeUser)[0].userName
-
-  console.log('activeUserName', activeUserName)
   return (
     <StyledGameInfo>
       {!gameState.isPlaying ? (
@@ -71,7 +71,7 @@ export const GameInfo = ({ gameState, yourTurn }) => {
           <p>Waiting for other users...</p>
         </WaitingForUsers>
       ) : (
-        <div>
+        <div style={{ position: 'relative' }}>
           {gameState.round !== 0 ? (
             <RoundInfo>
               <p>Round {gameState?.round}</p>
@@ -80,13 +80,6 @@ export const GameInfo = ({ gameState, yourTurn }) => {
 
           {gameState.word ? (
             <SecretWord word={gameState.word} yourTurn={yourTurn} />
-          ) : !gameState.roundFinished ? (
-            <WhoIsPickingWordMessage className='blink-me'>
-              <p>
-                {`${nameShortener(activeUserName)} выбірае,`}
-                <br /> што будзе маляваць...
-              </p>
-            </WhoIsPickingWordMessage>
           ) : null}
         </div>
       )}

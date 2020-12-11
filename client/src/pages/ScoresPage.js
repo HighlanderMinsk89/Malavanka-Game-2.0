@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { ButtonStyled } from '../components/shared/Button'
+import { ButtonStyled, StyledButton } from '../components/shared/Button'
 import styled from 'styled-components'
 import { SocketContext } from '../context/socketContext'
 import { SelectWordModal } from '../components/game/SelectWordModal'
@@ -11,7 +11,9 @@ export const ScoresPage = () => {
   return (
     <div>
       <h1>Scores Page</h1>
-      <SelectWordModal roomid={roomid} socket={socket} />
+      <StyledButton>
+        <span>click</span>
+      </StyledButton>
     </div>
   )
 }
