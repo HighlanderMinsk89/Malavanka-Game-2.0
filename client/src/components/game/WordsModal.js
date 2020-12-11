@@ -3,7 +3,7 @@ import { Modal, Row, Col, CardPanel } from 'react-materialize'
 import { Loader } from '../Loader'
 // import hintImage from '../../../public/question.png'
 
-import styled from 'styled-components/macro'
+import styled, { css, keyframes } from 'styled-components/macro'
 
 const StyledSelectWordModal = styled.div`
   width: 100%;
@@ -95,6 +95,11 @@ const HintIcon = styled.i`
   right: 5px;
 `
 
+const tooltipFadeIn = keyframes`
+  0% {opacity: 0}
+  100% {opacity: 1}
+`
+
 const HintTooltip = styled.div`
   position: absolute;
   height: 3em;
@@ -106,6 +111,7 @@ const HintTooltip = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 3px;
+  animation: ${tooltipFadeIn} ease 500ms;
 
   & p {
     font-size: 1em;
@@ -200,12 +206,6 @@ export const WordModal = ({
                 word={word}
                 onPress={handleClickWordSelected(word)}
               />
-              // <StyledWordCard onClick={handleClick(word)} key={word._id}>
-              //   <p>{word.word}</p>
-              //   <HintIcon img={process.env.PUBLIC_URL + '/question.png'}>
-              //     <HintTooltip />
-              //   </HintIcon>
-              // </StyledWordCard>
             )
           })}
         </StyledWordsContainer>
