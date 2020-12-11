@@ -99,6 +99,7 @@ class Game {
       Object.values(user)[0].match = false
     })
     this.gameFinished = false
+    this.round = 0
     this.startRound()
   }
 
@@ -107,6 +108,7 @@ class Game {
       Object.values(user)[0].roundPoints = 0
       Object.values(user)[0].isTurnToDraw = false
     })
+    this.isPlaying = true
     this.round++
     this.roundFinished = false
     this.word = null
@@ -119,6 +121,8 @@ class Game {
   }
 
   nextPlayer(skipped) {
+    this.word = null
+    this.wordToShow = null
     // bonus for active
     if (this.countMatch === this.users.length - 1) {
       Object.values(this.activeUser)[0].points += this.roundTimer
@@ -144,8 +148,6 @@ class Game {
       Object.values(this.users[activeIdx])[0].isTurnToDraw = false
       Object.values(this.users[activeIdx + 1])[0].isTurnToDraw = true
       this.activeUser.isTurnToDraw = true
-      this.word = null
-      this.wordToShow = null
     }
   }
 
@@ -178,8 +180,10 @@ class Game {
   finishGame() {
     this.round = 0
     this.word = null
-    this.wordToShow = 0
+    this.wordToShow = null
     this.gameFinished = true
+    this.roundFinished = true
+    // this.isPlaying = false
   }
 }
 

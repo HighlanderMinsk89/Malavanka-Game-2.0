@@ -7,7 +7,7 @@ import { AuthContext } from './context/authContext'
 import { SocketContext } from './context/socketContext'
 import { useSocketIO } from './hooks/useSocketIO'
 
-import styled, { ThemeProvider } from 'styled-components'
+import { ThemeProvider } from 'styled-components'
 
 const theme = {
   darkBlue: '#2B2D42',

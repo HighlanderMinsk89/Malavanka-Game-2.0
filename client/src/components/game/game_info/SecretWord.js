@@ -28,14 +28,21 @@ const StyledSecretWord = styled.div`
     margin: 0;
     animation: ${blinkWord} 1s linear 3;
   }
+
+  @media (max-width: 800px) {
+    & p {
+      letter-spacing: 1rem;
+      padding-left: 1rem;
+      font-size: 20px;
+      font-weight: 500;
+    }
+  }
 `
 
 export const SecretWord = ({ yourTurn }) => {
   const { gameState } = useContext(GameContext)
   const { wordToShow } = gameState
   const word = gameState.word?.word
-  console.log('word', word)
-  console.log('wordToShow', wordToShow)
 
   const [wordToDisplay, setWordToDisplay] = useState('')
 

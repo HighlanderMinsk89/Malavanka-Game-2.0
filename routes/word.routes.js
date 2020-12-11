@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const { Types } = require('mongoose')
 const Word = require('../models/Word')
 
 const router = Router()
@@ -16,9 +17,15 @@ router.post('/addword', async (req, res) => {
 })
 
 // api/word/getrandom3
-router.get('/getrandom3', async (req, res) => {
+router.get('/getrandom3/:roomid', async (req, res) => {
   try {
-    const allWords = await Word.aggregate([{ $sample: { size: 3 } }])
+    const roomid = req.params.roomid
+    console.log('roomid', roomid)
+    const allWords = await Word.aggregate([
+      { $match: { room: new Types.ObjectId(roomid) } },
+      { $sample: { size: 3 } },
+    ])
+
     res.status(200).json(allWords)
   } catch (error) {
     console.error(error)

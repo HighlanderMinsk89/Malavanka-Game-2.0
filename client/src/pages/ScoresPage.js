@@ -1,30 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { ButtonStyled } from '../components/shared/Button'
 import styled from 'styled-components'
-
-const ProgressBar = styled.div`
-  height: 20px;
-  width: 100%;
-  background-color: ${(props) => props.theme.darkBlue};
-  margin-top: 2rem;
-  border-radius: 15px;
-`
-
-const ProgressInner = styled.div`
-  height: 100%;
-  width: ${(props) => props.completed};
-  background-color: ${(props) => props.theme.brightRed};
-  border-radius: inherit;
-`
+import { SocketContext } from '../context/socketContext'
+import { SelectWordModal } from '../components/game/SelectWordModal'
 
 export const ScoresPage = () => {
+  const roomid = '5fd289ec57f85e32342e4cbe'
+  const { socket } = useContext(SocketContext)
+
   return (
     <div>
       <h1>Scores Page</h1>
-      <ButtonStyled className='default-shadow '>Hello</ButtonStyled>
-      <ProgressBar>
-        <ProgressInner completed='80%' />
-      </ProgressBar>
+      <p>
+        LOH выбірае, <br /> што будзе маляваць...
+      </p>
     </div>
   )
 }

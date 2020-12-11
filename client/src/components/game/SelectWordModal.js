@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { WordModal } from './WordsModal'
 import { useHttp } from '../../hooks/http.hook'
 import { useMessage } from '../../hooks/message.hook'
+import { WordModal } from './WordsModal'
 
 export const SelectWordModal = ({ socket, roomid }) => {
   const [words, setWords] = useState([])
@@ -10,8 +10,10 @@ export const SelectWordModal = ({ socket, roomid }) => {
   const message = useMessage()
 
   const fetchWords = useCallback(async () => {
-    const response = await request('/api/word/getrandom3', 'get')
-    if (response) setWords(response)
+    if (roomid) {
+      const response = await request(`/api/word/getrandom3/${roomid}`, 'get')
+      if (response) setWords(response)
+    }
   }, [request])
 
   const handleClick = (word) => (e) => {

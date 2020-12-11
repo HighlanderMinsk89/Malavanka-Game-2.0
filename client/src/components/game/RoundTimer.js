@@ -6,7 +6,7 @@ const ProgressBar = styled.div`
   height: 10px;
   width: 100%;
   background-color: ${(props) => props.theme.darkBlue};
-  box-shadow: ${(props) => props.theme.bigShadow};
+  /* box-shadow: ${(props) => props.theme.bigShadow}; */
 `
 
 const ProgressInner = styled.div`
@@ -19,6 +19,7 @@ const ProgressInner = styled.div`
 export const RoundTimer = () => {
   const { roomid, socket, yourTurn, gameState } = useContext(GameContext)
   const roundTimer = gameState.roundTimer
+  const secretWord = gameState.word?.word
   const [timer, setTimer] = useState(roundTimer)
 
   let interval = useRef()
@@ -26,6 +27,12 @@ export const RoundTimer = () => {
     if (yourTurn) {
       interval.current = setInterval(() => {
         if (timer === 0) {
+          const body = {
+            roomid,
+            userName: 'Malavanka',
+            message: `Вы адгадвалі слова "${secretWord}"`,
+          }
+          socket.emit('send message', body)
           socket.emit('drawFinishedNextPlayer', roomid)
         } else {
           socket.emit('roundTimer', { roomid })

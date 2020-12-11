@@ -1,9 +1,13 @@
-const { Schema, model, Types } = require('mongoose')
+const { Schema, model } = require('mongoose')
 
 const schema = new Schema({
+  author: String,
+  room: Schema.Types.ObjectId,
   word: { type: String, unique: true, required: true },
-  numOfTimes: { type: Number, default: 0 },
-  translation: { default: { ru: '', eng: '' } },
+  word_ru: { type: String },
+  word_en: { type: String },
+  numOfTimesGuessedCorrect: { type: Number, default: 0 },
+  numOfTimesNobodyGuessedCorrect: { type: Number, default: 0 },
 })
 
 module.exports = model('Word', schema)

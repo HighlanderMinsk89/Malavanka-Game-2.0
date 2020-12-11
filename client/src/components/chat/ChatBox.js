@@ -13,7 +13,7 @@ const StyledChatBox = styled.div`
 `
 
 const ChatMessageWrapper = styled.div`
-  margin: 0.3rem 0.3rem;
+  margin: 0.1rem 0.3rem;
   border-radius: 3px;
   width: auto;
   display: flex;
@@ -24,10 +24,18 @@ const ChatMessageWrapper = styled.div`
 const StyledChatMessage = styled.div`
   box-shadow: ${(props) => props.theme.shadow};
   display: flex;
-  padding: 0.2em 0.1em;
+  padding: 0.1em 0.2em;
   color: ${(props) => props.theme.white};
   background-color: ${(props) =>
     props.correct ? props.theme.green : props.theme.darkBlue};
+
+  ${(props) =>
+    props.userName === 'Malavanka'
+      ? css`
+          background-color: #ffb703;
+          color: ${(props) => props.theme.darkBlue};
+        `
+      : null}
 
   width: fit-content;
   & p {
@@ -36,14 +44,17 @@ const StyledChatMessage = styled.div`
   }
 
   & p em {
+    padding-right: 0.3em;
     color: ${(props) =>
-      props.correct ? props.theme.white : props.theme.brightRed};
+      props.correct && props.userName !== 'Malavanka'
+        ? props.theme.white
+        : props.theme.brightRed};
   }
 `
 
 const ChatMessage = ({ userName, message, correct, yourMessage }) => {
   return (
-    <StyledChatMessage correct={correct}>
+    <StyledChatMessage correct={correct} userName={userName}>
       {correct ? (
         <p>{`${yourMessage ? 'YOU' : userName} GUESSED THE WORD!`}</p>
       ) : (

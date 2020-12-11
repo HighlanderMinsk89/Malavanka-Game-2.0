@@ -1,6 +1,7 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import styled from 'styled-components/macro'
 import { SecretWord } from './SecretWord'
+import { nameShortener } from '../../../utils'
 
 const StyledGameInfo = styled.div`
   display: flex;
@@ -31,7 +32,7 @@ const RoundInfo = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-basis: 30%;
+  flex-basis: 40%;
   & p {
     border-radius: 3px;
     padding: 0 1em;
@@ -44,7 +45,25 @@ const RoundInfo = styled.div`
   }
 `
 
+const WhoIsPickingWordMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  & p {
+    color: ${(props) => props.theme.darkBlue};
+    padding: 0 0.5em;
+    font-size: 1.2em;
+    font-style: italic;
+  }
+`
+
 export const GameInfo = ({ gameState, yourTurn }) => {
+  let activeUserName
+  if (gameState.activeUser)
+    activeUserName = Object.values(gameState.activeUser)[0].userName
+
+  console.log('activeUserName', activeUserName)
   return (
     <StyledGameInfo>
       {!gameState.isPlaying ? (
@@ -53,11 +72,21 @@ export const GameInfo = ({ gameState, yourTurn }) => {
         </WaitingForUsers>
       ) : (
         <div>
-          <RoundInfo>
-            <p>Round {gameState?.round}</p>
-          </RoundInfo>
+          {gameState.round !== 0 ? (
+            <RoundInfo>
+              <p>Round {gameState?.round}</p>
+            </RoundInfo>
+          ) : null}
+
           {gameState.word ? (
             <SecretWord word={gameState.word} yourTurn={yourTurn} />
+          ) : !gameState.roundFinished ? (
+            <WhoIsPickingWordMessage className='blink-me'>
+              <p>
+                {`${nameShortener(activeUserName)} выбірае,`}
+                <br /> што будзе маляваць...
+              </p>
+            </WhoIsPickingWordMessage>
           ) : null}
         </div>
       )}

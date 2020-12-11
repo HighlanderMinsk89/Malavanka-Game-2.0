@@ -1,7 +1,7 @@
 html {
   box-sizing: border-box;
   height: 100%;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Open Sans;
 }
 
 body {
@@ -183,7 +183,14 @@ canvas {
 
 
 .modal {
-  background-color: rgb(218, 51, 59);
+  background-color: #2B2D42;
+  padding: 0 1em;
+  max-width: 800px;
+  min-height: 10em;
+}
+
+.modal-content {
+  padding: 0 !important;
 }
 
 /* To override default modal   */

@@ -40,6 +40,7 @@ const socketForGame = (io, socket) => {
   socket.on('newGame', (roomid) => {
     if (roomsAndUsers[roomid]) {
       roomsAndUsers[roomid].startNewGame()
+      io.to(roomid).emit('clearChat')
       io.to(roomid).emit('gameStateUpdate', roomsAndUsers[roomid])
       io.to(roomid).emit(
         'usersRoomUpdate',

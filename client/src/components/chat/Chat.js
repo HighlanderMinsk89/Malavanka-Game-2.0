@@ -22,6 +22,13 @@ export const Chat = () => {
   useEffect(() => {
     const socketCopy = socket
 
+    socket.on('clearChat', () => {
+      if (messages.length >= 50) {
+        setMessages([])
+        console.log('messages', messages)
+      }
+    })
+
     socket.on('welcomeMessage', (message) => {
       const editedM = {
         message: `${message}, ${userName}!`,
@@ -45,8 +52,9 @@ export const Chat = () => {
       socketCopy.removeListener('welcomeMessage')
       socketCopy.removeListener('userJoinedMessage')
       socketCopy.removeListener('message')
+      socketCopy.removeListener('clearChat')
     }
-  }, [setMessages, userName, socket, location, roomid])
+  }, [setMessages, userName, socket, location, roomid, messages])
 
   const handleFormChange = (e) => {
     setMessage(e.target.value)
