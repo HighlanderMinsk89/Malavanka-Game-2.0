@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Row, Col, CardPanel } from 'react-materialize'
 import { Loader } from '../Loader'
+// import hintImage from '../../../public/question.png'
 
 import styled from 'styled-components/macro'
 
@@ -55,12 +56,14 @@ const StyledWordCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 
   & p {
     color: ${(props) => props.theme.darkBlue};
     font-size: 1.5em;
     font-weight: bolder;
     padding: 0 0.5em;
+
     margin: 0;
     display: flex;
     align-content: center;
@@ -82,7 +85,79 @@ const StyledWordCard = styled.div`
   }
 `
 
-export const WordModal = ({ handleClick, words, loading, roomid, socket }) => {
+const HintIcon = styled.i`
+  background: url(${(props) => props.img});
+  background-size: cover;
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  top: -10px;
+  right: 5px;
+`
+
+const HintTooltip = styled.div`
+  position: absolute;
+  height: 3em;
+  width: fit-content;
+  background-color: ${(props) => props.theme.white};
+  transform: skew(20deg);
+  top: -4em;
+  left: inherit;
+  display: flex;
+  flex-direction: column;
+  border-radius: 3px;
+
+  & p {
+    font-size: 1em;
+    margin: 0;
+    padding: 0 0.3em;
+    color: ${(props) => props.theme.darkBlue};
+  }
+
+  & p i {
+    color: gray;
+  }
+
+  @media (max-width: 800px) {
+    top: -2em;
+    right: -7em;
+  }
+`
+
+const WordCard = ({ word, onPress }) => {
+  const [showTooltip, setShowTooltip] = useState(false)
+
+  const toogleTooltip = () => setShowTooltip((prev) => !prev)
+  return (
+    <StyledWordCard onClick={onPress}>
+      <p>{word?.word}</p>
+      <HintIcon
+        img={process.env.PUBLIC_URL + '/question.png'}
+        onMouseEnter={toogleTooltip}
+        onMouseLeave={toogleTooltip}
+      />
+      {showTooltip ? (
+        <HintTooltip>
+          <p>
+            <i>ru: </i>&nbsp;&nbsp;{word.word_ru}
+          </p>
+          <p>
+            <i>en: </i>&nbsp;&nbsp;
+            {word.word_en}
+          </p>
+        </HintTooltip>
+      ) : null}
+    </StyledWordCard>
+  )
+}
+
+export const WordModal = ({
+  handleClickWordSelected,
+  words,
+  loading,
+  roomid,
+  socket,
+}) => {
   const [timer, setTimer] = useState(15)
 
   useEffect(() => {
@@ -120,9 +195,17 @@ export const WordModal = ({ handleClick, words, loading, roomid, socket }) => {
         <StyledWordsContainer>
           {words?.map((word) => {
             return (
-              <StyledWordCard onClick={handleClick(word)} key={word._id}>
-                <p>{word.word}</p>
-              </StyledWordCard>
+              <WordCard
+                key={word._id}
+                word={word}
+                onPress={handleClickWordSelected(word)}
+              />
+              // <StyledWordCard onClick={handleClick(word)} key={word._id}>
+              //   <p>{word.word}</p>
+              //   <HintIcon img={process.env.PUBLIC_URL + '/question.png'}>
+              //     <HintTooltip />
+              //   </HintIcon>
+              // </StyledWordCard>
             )
           })}
         </StyledWordsContainer>

@@ -11,9 +11,7 @@ export const ScoresPage = () => {
   return (
     <div>
       <h1>Scores Page</h1>
-      <p>
-        LOH выбірае, <br /> што будзе маляваць...
-      </p>
+      <SelectWordModal roomid={roomid} socket={socket} />
     </div>
   )
 }
