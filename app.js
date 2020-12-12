@@ -17,7 +17,7 @@ app.use('/api/room', require('./routes/room.routes'))
 app.use('/api/word', require('./routes/word.routes'))
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client', 'build')))
+  app.use(express.static('client/build'))
 
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
