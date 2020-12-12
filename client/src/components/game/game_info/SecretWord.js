@@ -52,7 +52,7 @@ export const SecretWord = ({ yourTurn }) => {
     } else {
       setWordToDisplay(wordToShow)
     }
-  }, [gameState, yourTurn])
+  }, [gameState, yourTurn, word, wordToShow])
 
   return (
     <StyledSecretWord>

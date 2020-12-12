@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
 import { GameContext } from '../../context/gameContext'
 import { ChatBox } from './ChatBox'
-import { ButtonStyled, StyledButton } from '../shared/Button'
+import { StyledButton } from '../shared/Button'
 
 export const Chat = () => {
   const [messages, setMessages] = useState([])

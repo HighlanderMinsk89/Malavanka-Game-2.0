@@ -14,7 +14,7 @@ export const SelectWordModal = ({ socket, roomid }) => {
       const response = await request(`/api/word/getrandom3/${roomid}`, 'get')
       if (response) setWords(response)
     }
-  }, [request])
+  }, [request, roomid])
 
   const handleClickWordSelected = (word) => (e) => {
     setSelectedWord(word)

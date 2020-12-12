@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { CanvasContext } from '../../context/canvasContext'
-import { ButtonStyled, StyledButton } from '../shared/Button'
+import { StyledButton } from '../shared/Button'
 
 const colors = [
   '#d90429',

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext, Fragment } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import { GameContext } from '../../context/gameContext'
-import styled from 'styled-components'
 import { nameShortener } from '../../utils'
 
 const NicksChips = styled.div`

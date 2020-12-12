@@ -181,7 +181,7 @@ export const CanvasComponent = ({
   }
 
   const recreateDrawing = (stack) => {
-    const t0 = performance.now()
+    // const t0 = performance.now()
     for (let line of stack) {
       contextRef.current.strokeStyle = line.colorSelected
       contextRef.current.lineWidth = line.lineSelected
@@ -200,7 +200,7 @@ export const CanvasComponent = ({
       }
       contextRef.current.closePath()
     }
-    const t1 = performance.now()
+    // const t1 = performance.now()
     // console.log(t1 - t0)
   }
 
