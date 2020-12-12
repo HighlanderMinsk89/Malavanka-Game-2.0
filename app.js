@@ -25,13 +25,13 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // const httpPORT = config.get('httpPORT') || 5000
-const httpPORT = 5000
+const httpPORT = process.env.PORT || config.get('httpPORT')
 
 socketConsumer.start(io)
 
 async function start() {
   try {
-    await mongoose.connect(config.get('mongoUri'), {
+    await mongoose.connect(process.env.MONGODB_URI || config.get('mongoUri'), {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
