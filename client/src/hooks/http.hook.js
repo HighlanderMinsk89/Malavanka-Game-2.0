@@ -14,9 +14,9 @@ export const useHttp = () => {
           url,
           data: body,
         })
-
-        setLoading(false)
-
+        setTimeout(() => {
+          setLoading(false)
+        }, 700)
         return data
       } catch (error) {
         setLoading(false)

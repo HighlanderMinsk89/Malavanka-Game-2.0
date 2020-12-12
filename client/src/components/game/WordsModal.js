@@ -163,7 +163,7 @@ export const WordModal = ({
   roomid,
   socket,
 }) => {
-  const [timer, setTimer] = useState(15)
+  const [timer, setTimer] = useState(16)
 
   useEffect(() => {
     const interval = setInterval(() => {
