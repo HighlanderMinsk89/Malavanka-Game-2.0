@@ -78,40 +78,36 @@ export const CanvasComponent = ({
 
   // *reassign canvas coordinates and redraw if needed
   useEffect(() => {
-    let newCanvasStyleWidth
-    let newCanvasStyleHeight
-    if (canvasRef.current && contWidth) {
-      if (contHeight < contWidth * 0.7 && contHeight) {
-        newCanvasStyleHeight = contHeight
-        newCanvasStyleWidth = contHeight / 0.7
-      } else if (contHeight === 0) {
-        newCanvasStyleWidth = contWidth
-        newCanvasStyleHeight = contWidth * 0.7
-      }
+    const wrapperCont = document.getElementsByClassName(
+      'canvas-cont-wrapper'
+    )[0]
+    const wrapperContH = +window
+      .getComputedStyle(wrapperCont, null)
+      .getPropertyValue('height')
+      .slice(0, -2)
+    const computedH = contHeight || wrapperContH
+    let computedW = contWidth
 
-      canvasRef.current.style.width = newCanvasStyleWidth + 'px'
-      canvasRef.current.style.height = newCanvasStyleHeight + 'px'
-      canvasRef.current.width = newCanvasStyleWidth * 2
-      canvasRef.current.height = newCanvasStyleHeight * 2
-
-      const context = canvasRef.current.getContext('2d')
-      context.strokeStyle = colorSelected
-      context.lineWidth = lineSelected
-      context.lineCap = 'round'
-      if (redrawStack.current?.getStack().length) {
-        context.clearRect(
-          0,
-          0,
-          canvasRef.current.width,
-          canvasRef.current.height
-        )
-      }
-
-      contextRef.current = context
-
-      if (redrawStack.current.getStack().length)
-        recreateDrawing(redrawStack.current.getStack())
+    if (computedH < 840) {
+      computedW = computedH / 0.7
     }
+    canvasRef.current.style.width = computedW + 'px'
+    canvasRef.current.style.height = computedH + 'px'
+    canvasRef.current.width = computedW * 2
+    canvasRef.current.height = computedH * 2
+
+    const context = canvasRef.current.getContext('2d')
+    context.strokeStyle = colorSelected
+    context.lineWidth = lineSelected
+    context.lineCap = 'round'
+    if (redrawStack.current?.getStack().length) {
+      context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+    }
+
+    contextRef.current = context
+
+    if (redrawStack.current.getStack().length)
+      recreateDrawing(redrawStack.current.getStack())
   }, [contWidth, contHeight])
 
   const setInitialCanvasSize = (canvas) => {
@@ -131,6 +127,7 @@ export const CanvasComponent = ({
     const canvas = canvasRef.current
     setInitialCanvasSize(canvas)
     contextRef.current = canvas.getContext('2d')
+    contextRef.current.lineCap = 'round'
   }, [])
 
   useEffect(() => {

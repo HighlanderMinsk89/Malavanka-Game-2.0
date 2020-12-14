@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { useParams } from 'react-router-dom'
 import { GameContext } from '../../context/gameContext'
 import { nameShortener } from '../../utils'
@@ -7,7 +7,8 @@ import { nameShortener } from '../../utils'
 const NicksChips = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 0.5rem;
+  margin-top: -0.3rem;
+  margin-bottom: 0.3rem;
   min-height: 2rem;
 `
 
@@ -21,7 +22,7 @@ const NickChipCont = styled.div`
   border-radius: 3px;
   height: 2rem;
   margin-right: 0.3rem;
-  margin-bottom: 0.3rem;
+  margin-top: 0.3rem;
 `
 
 const NickChipName = styled.p`

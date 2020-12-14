@@ -48,8 +48,8 @@ export const CanvasMain = ({
           handleHeight
           targetRef={sizeWrapper}
           skipOnMount={true}
-          refreshMode='debounce'
-          refreshRate={0}
+          refreshMode='throttle'
+          refreshRate={10}
         >
           {({ width, height }) => (
             <div className='canvas-cont-wrapper' ref={sizeWrapper}>
