@@ -40,13 +40,9 @@ export const CanvasMain = ({
     >
       <div className='canvas-tools-cont'>
         {yourTurn ? (
-          <EditDrawTools
-            socket={socket}
-            yourTurn={yourTurn}
-            clearCanvas={clearCanvasWithButton}
-          />
+          <EditDrawTools socket={socket} clearCanvas={clearCanvasWithButton} />
         ) : null}
-        {/* {isPlaying && word ? <RoundTimer /> : null} */}
+
         <ReactResizeDetector
           handleWidth
           handleHeight
@@ -54,7 +50,6 @@ export const CanvasMain = ({
           skipOnMount={true}
           refreshMode='debounce'
           refreshRate={0}
-          // refreshOptions={{ trailing: true }}
         >
           {({ width, height }) => (
             <div className='canvas-cont-wrapper' ref={sizeWrapper}>

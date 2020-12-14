@@ -32,14 +32,21 @@ export const CanvasComponent = ({
 
   const redrawStack = useRef(new RedrawStack())
 
+  // *listen for active user drawings
   useEffect(() => {
     socketRef.current.on('startDrawingCli', ({ offsetX, offsetY }) => {
+      setIsDrawing(true)
+      contextRef.current.lineCap = 'round'
       contextRef.current.beginPath()
       contextRef.current.moveTo(
         offsetX * 2 * canvasRef.current.width,
         offsetY * 2 * canvasRef.current.height
       )
-      setIsDrawing(true)
+      contextRef.current.lineTo(
+        offsetX * 2 * canvasRef.current.width,
+        offsetY * 2 * canvasRef.current.height
+      )
+      contextRef.current.stroke()
     })
 
     socketRef.current.on('finishDrawingCli', (stack) => {
@@ -69,6 +76,7 @@ export const CanvasComponent = ({
     })
   })
 
+  // *reassign canvas coordinates and redraw if needed
   useEffect(() => {
     let newCanvasStyleWidth
     let newCanvasStyleHeight
@@ -86,18 +94,23 @@ export const CanvasComponent = ({
       canvasRef.current.width = newCanvasStyleWidth * 2
       canvasRef.current.height = newCanvasStyleHeight * 2
 
-      if (contextRef.current) {
-        contextRef.current.strokeStyle = colorSelected
-        contextRef.current.lineWidth = lineSelected
-      }
-      contextRef.current &&
-        contextRef.current.clearRect(
+      const context = canvasRef.current.getContext('2d')
+      context.strokeStyle = colorSelected
+      context.lineWidth = lineSelected
+      context.lineCap = 'round'
+      if (redrawStack.current?.getStack().length) {
+        context.clearRect(
           0,
           0,
           canvasRef.current.width,
           canvasRef.current.height
         )
-      recreateDrawing(redrawStack.current.getStack())
+      }
+
+      contextRef.current = context
+
+      if (redrawStack.current.getStack().length)
+        recreateDrawing(redrawStack.current.getStack())
     }
   }, [contWidth, contHeight])
 
@@ -116,9 +129,8 @@ export const CanvasComponent = ({
 
   useEffect(() => {
     const canvas = canvasRef.current
-    const context = canvas.getContext('2d')
-    contextRef.current = context
     setInitialCanvasSize(canvas)
+    contextRef.current = canvas.getContext('2d')
   }, [])
 
   useEffect(() => {
@@ -131,9 +143,11 @@ export const CanvasComponent = ({
   const startDrawing = (e) => {
     if (yourTurn) {
       const { offsetX, offsetY } = e.nativeEvent
+      setIsDrawing(true)
       contextRef.current.beginPath()
       contextRef.current.moveTo(offsetX * 2, offsetY * 2)
-      setIsDrawing(true)
+      contextRef.current.lineTo(offsetX * 2, offsetY * 2)
+      contextRef.current.stroke()
 
       redrawStack.current &&
         redrawStack.current.addLine(
@@ -181,27 +195,27 @@ export const CanvasComponent = ({
   }
 
   const recreateDrawing = (stack) => {
-    // const t0 = performance.now()
+    const ctx = contextRef.current
     for (let line of stack) {
-      contextRef.current.strokeStyle = line.colorSelected
-      contextRef.current.lineWidth = line.lineSelected
-      contextRef.current.beginPath()
-      contextRef.current.moveTo(
-        (line.x * canvasRef.current.width) / line.width,
-        (line.y * canvasRef.current.height) / line.height
-      )
+      ctx.strokeStyle = line.colorSelected
+      ctx.lineWidth = line.lineSelected
+      ctx.lineCap = 'round'
+      const startCoordX = (line.x * canvasRef.current.width) / line.width
+      const startCoordY = (line.y * canvasRef.current.height) / line.height
+      ctx.beginPath()
+      ctx.moveTo(startCoordX, startCoordY)
+      ctx.lineTo(startCoordX, startCoordY)
+      ctx.stroke()
 
       for (let draw of line.path) {
-        contextRef.current.lineTo(
+        ctx.lineTo(
           (draw.x * canvasRef.current.width) / line.width,
           (draw.y * canvasRef.current.height) / line.height
         )
-        contextRef.current.stroke()
+        ctx.stroke()
       }
-      contextRef.current.closePath()
+      ctx.closePath()
     }
-    // const t1 = performance.now()
-    // console.log(t1 - t0)
   }
 
   const clearCanvas = useCallback(
