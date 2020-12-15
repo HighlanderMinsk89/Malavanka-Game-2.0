@@ -44,12 +44,11 @@ export const RoundTimer = () => {
 
   useEffect(() => {
     // const socketCopy = socket
-    socket.on('testRound', (seconds) => {
+    socket.on('drawingTimer', (seconds) => {
       setTimer(seconds)
     })
     return () => {
-      socket.removeAllListeners('testRound')
-      console.log('dismounted')
+      socket.removeAllListeners('drawingTimer')
     }
   }, [socket])
 

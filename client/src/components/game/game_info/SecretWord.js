@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import styled, { keyframes } from 'styled-components/macro'
 import { GameContext } from '../../../context/gameContext'
+import { SocketContext } from '../../../context/socketContext'
 
 const blinkWord = keyframes`
   50% {
@@ -41,6 +42,7 @@ const StyledSecretWord = styled.div`
 
 export const SecretWord = ({ yourTurn }) => {
   const { gameState } = useContext(GameContext)
+  const { socket } = useContext(SocketContext)
   const { wordToShow } = gameState
   const word = gameState.word?.word
 
@@ -53,6 +55,14 @@ export const SecretWord = ({ yourTurn }) => {
       setWordToDisplay(wordToShow)
     }
   }, [gameState, yourTurn, word, wordToShow])
+
+  useEffect(() => {
+    socket.on('revealWord', (word) => {
+      if (!yourTurn) setWordToDisplay(word)
+    })
+
+    return () => socket.removeAllListeners('revealWord')
+  }, [socket, yourTurn])
 
   return (
     <StyledSecretWord>

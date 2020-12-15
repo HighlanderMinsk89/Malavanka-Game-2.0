@@ -31,7 +31,6 @@ class GameRoom {
     this.word = word
     this.word.word = this.word.word.toUpperCase()
     this.wordToShow = this.word.word.replace(/./gi, '_')
-    // clearInterval(this.roundInterval)
   }
 
   setRoundTimer() {
@@ -162,7 +161,6 @@ class GameRoom {
       Object.values(this.activeUser)[0].roundPoints -= 10
     }
     if (activeIdx === this.users.length - 1) {
-      console.log('CHNGING FUCKER!!!!!!!!!!!!!!')
       this.roundFinished = true
     } else {
       this.activeUser = this.users[activeIdx + 1]

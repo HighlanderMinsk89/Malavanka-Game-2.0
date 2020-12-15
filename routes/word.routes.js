@@ -20,7 +20,6 @@ router.post('/addword', async (req, res) => {
 router.get('/getrandom3/:roomid', async (req, res) => {
   try {
     const roomid = req.params.roomid
-    console.log('roomid', roomid)
     const allWords = await Word.aggregate([
       { $match: { room: new Types.ObjectId(roomid) } },
       { $sample: { size: 3 } },

@@ -22,7 +22,6 @@ export const RoomsPage = () => {
   }, [fetchRooms])
 
   const setCapacityCB = (rooms) => {
-    console.log('rooms', rooms)
     setGameRooms(rooms)
   }
 

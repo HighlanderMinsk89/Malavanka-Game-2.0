@@ -6,14 +6,29 @@ const socketForGame = (io, socket) => {
     room.roundTimer = 30
     roundIntervals[roomid] = setInterval(() => {
       if (room.roundTimer === 0 || !room.isPlaying) {
+        const body = {
+          roomid,
+          userName: 'Malavanka',
+          message: `Вы адгадвалі слова "${room.word.word}"`,
+        }
+        io.to(roomid).emit('message', body)
+
         room.nextPlayer(false)
+
         io.to(roomid).emit('gameStateUpdate', room)
         io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
         socket.emit('clearCanvasBeforeGame')
         clearInterval(roundIntervals[roomid])
       } else {
         room.setRoundTimer()
-        io.to(roomid).emit('testRound', room.roundTimer)
+        if (
+          room.roundTimer === 45 ||
+          room.roundTimer === 30 ||
+          room.roundTimer === 15
+        ) {
+          io.to(roomid).emit('revealWord', room.wordToShow)
+        }
+        io.to(roomid).emit('drawingTimer', room.roundTimer)
       }
     }, 1000)
   }
