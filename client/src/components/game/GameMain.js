@@ -28,6 +28,8 @@ export const GameMain = ({ socket, roomid }) => {
         setYourTurn(turn)
       }
     }
+    console.log('gameState.isPlaying', gameState.isPlaying)
+    console.log('gameState.roundFinished', gameState.roundFinished)
     socket.on('gameStateUpdate', callback)
 
     const socketCopy = socket

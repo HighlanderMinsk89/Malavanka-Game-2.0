@@ -13,7 +13,7 @@ const ProgressInner = styled.div`
   height: 100%;
   width: ${(props) => props.completed};
   background-color: ${(props) => props.theme.brightRed};
-  transition: width 2s ease-in-out;
+  /* transition: width 2s ease-in-out; */
 `
 
 export const RoundTimer = () => {
@@ -22,29 +22,41 @@ export const RoundTimer = () => {
   const secretWord = gameState.word?.word
   const [timer, setTimer] = useState(roundTimer)
 
-  let interval = useRef()
-  useEffect(() => {
-    if (yourTurn) {
-      interval.current = setInterval(() => {
-        if (timer === 0) {
-          const body = {
-            roomid,
-            userName: 'Malavanka',
-            message: `Вы адгадвалі слова "${secretWord}"`,
-          }
-          socket.emit('send message', body)
-          socket.emit('drawFinishedNextPlayer', roomid)
-        } else {
-          socket.emit('roundTimer', { roomid })
-        }
-      }, 1000)
-    }
-    return () => clearInterval(interval.current)
-  }, [timer, socket, roomid, yourTurn, secretWord])
+  // let interval = useRef()
+  // useEffect(() => {
+  //   if (yourTurn) {
+  //     interval.current = setInterval(() => {
+  //       if (timer === 0) {
+  //         const body = {
+  //           roomid,
+  //           userName: 'Malavanka',
+  //           message: `Вы адгадвалі слова "${secretWord}"`,
+  //         }
+  //         socket.emit('send message', body)
+  //         socket.emit('drawFinishedNextPlayer', roomid)
+  //       } else {
+  //         socket.emit('roundTimer', { roomid })
+  //       }
+  //     }, 1000)
+  //   }
+  //   return () => clearInterval(interval.current)
+  // }, [timer, socket, roomid, yourTurn, secretWord])
 
   useEffect(() => {
-    setTimer(roundTimer)
-  }, [roundTimer])
+    // const socketCopy = socket
+    socket.on('testRound', (seconds) => {
+      console.log('seconds', seconds)
+      setTimer(seconds)
+    })
+    return () => {
+      socket.removeAllListeners('testRound')
+      console.log('dismounted')
+    }
+  }, [socket])
+
+  // useEffect(() => {
+  //   setTimer(roundTimer)
+  // }, [roundTimer])
 
   return (
     <ProgressBar>

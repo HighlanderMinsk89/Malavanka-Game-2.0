@@ -5,6 +5,7 @@ const gameState = {}
 class GameRoom {
   constructor(roomid) {
     this.roomid = roomid
+    this.roomEmitter = new EventEmitter()
     this.users = []
     this.activeUser = null
     this.word = null
@@ -15,7 +16,8 @@ class GameRoom {
     this.roundFinished = false
     this.gameFinished = false
     this.countMatch = 0
-    this.roundTimer = 30
+    this.roundTimer = null
+    this.roundInterval = null
     this.wordSelectionTimer = null
     this.roundResultsTimer = null
     this.gameResultsTimer = null
@@ -29,6 +31,7 @@ class GameRoom {
     this.word = word
     this.word.word = this.word.word.toUpperCase()
     this.wordToShow = this.word.word.replace(/./gi, '_')
+    // clearInterval(this.roundInterval)
   }
 
   setRoundTimer() {
@@ -38,7 +41,9 @@ class GameRoom {
       this.roundTimer === 30 ||
       this.roundTimer === 15
     )
-      this.wordToShow = revealWord(this.word.word, this.wordToShow)
+      if (this.word) {
+        this.wordToShow = revealWord(this.word.word, this.wordToShow)
+      }
   }
 
   addUser(user) {
@@ -56,29 +61,32 @@ class GameRoom {
     this.round = 0
     this.roundFinished = false
     this.gameFinished = false
-    this.roundTimer = 30
+    this.roundTimer = null
     this.countMatch = 0
     this.wordSelectionTimer = null
     this.roundResultsTimer = null
     this.gameResultsTimer = null
   }
 
-  removeUserFromRoom(socketId) {
+  removeUserFromRoom(socketId, interval) {
     if (this.users.length === 1) {
       this.users = []
       this.setDefaultGame()
+      clearInterval(interval)
     } else if (this.users.length === 2) {
+      console.log('this.users.length', this.users.length)
       this.users = this.users.filter(
         (user) => Object.keys(user)[0] !== socketId
       )
-      if (this.users[0]) {
-        this.users[0].points = 0
-        this.users[0].roundPoints = 0
-        this.users[0].match = false
-      }
-
+      this.users.forEach((user) => {
+        Object.values(user)[0].points = 0
+        Object.values(user)[0].roundPoints = 0
+        Object.values(user)[0].match = false
+      })
+      this.isPlaying = false
       this.setDefaultGame()
       this.activeUser = this.users[0]
+      clearInterval(interval)
     } else {
       if (this.activeUser && Object.keys(this.activeUser)[0] === socketId) {
         const activeIdx = this.users.findIndex(
@@ -138,7 +146,7 @@ class GameRoom {
     this.users.forEach((user) => {
       Object.values(user)[0].match = false
     })
-    this.roundTimer = 30
+    // this.roundTimer = 30
     this.countMatch = 0
     const activeIdx = this.users.findIndex(
       (player) => player === this.activeUser
@@ -148,6 +156,7 @@ class GameRoom {
       Object.values(this.activeUser)[0].roundPoints -= 10
     }
     if (activeIdx === this.users.length - 1) {
+      console.log('CHNGING FUCKER!!!!!!!!!!!!!!')
       this.roundFinished = true
     } else {
       this.activeUser = this.users[activeIdx + 1]
@@ -158,7 +167,7 @@ class GameRoom {
     }
   }
 
-  calcPointsForUserOnMatch(socketId) {
+  calcPointsForUserOnMatch(socketId, interval) {
     const user = this.users.find((user) => Object.keys(user)[0] === socketId)
     if (!user[socketId].match) {
       let points = 0
@@ -173,7 +182,10 @@ class GameRoom {
       user[socketId].points = user[socketId].points + points
       user[socketId].roundPoints = user[socketId].roundPoints + points
       user[socketId].match = true
-      if (this.countMatch === this.users.length - 1) this.nextPlayer(false)
+      if (this.countMatch === this.users.length - 1) {
+        if (interval) clearInterval(interval)
+        this.nextPlayer(false)
+      }
     }
   }
 

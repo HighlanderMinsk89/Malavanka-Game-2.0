@@ -1,12 +1,30 @@
 const { gameState, createGame } = require('./game-module/game')
+let roundIntervals = {}
 
 const socketForGame = (io, socket) => {
+  const setRoundInterval = (room, roomid) => {
+    room.roundTimer = 30
+    roundIntervals[roomid] = setInterval(() => {
+      if (room.roundTimer === 0 || !room.isPlaying) {
+        room.nextPlayer(false)
+        io.to(roomid).emit('gameStateUpdate', room)
+        io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
+        socket.emit('clearCanvasBeforeGame')
+        clearInterval(roundIntervals[roomid])
+      } else {
+        room.setRoundTimer()
+        io.to(roomid).emit('testRound', room.roundTimer)
+      }
+    }, 1000)
+  }
+
   socket.on('wordSelected', ({ selectedWord, roomid }) => {
     if (gameState[roomid]) {
       gameState[roomid].setWord(selectedWord)
-      gameState[roomid].roundTimer = 30
-      io.to(roomid).emit('gameStateUpdate', gameState[roomid])
       socket.emit('clearCanvasBeforeGame')
+
+      setRoundInterval(gameState[roomid], roomid)
+      io.to(roomid).emit('gameStateUpdate', gameState[roomid])
     }
   })
 
@@ -35,26 +53,29 @@ const socketForGame = (io, socket) => {
       io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
     }
   })
-  socket.on('drawFinishedNextPlayer', (roomid) => {
-    if (gameState[roomid]) {
-      gameState[roomid].nextPlayer(false)
-      io.to(roomid).emit('gameStateUpdate', gameState[roomid])
-      io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
-      socket.emit('clearCanvasBeforeGame')
-    }
-  })
+  // socket.on('drawFinishedNextPlayer', (roomid) => {
+  //   if (gameState[roomid]) {
+  //     gameState[roomid].nextPlayer(false)
+  //     io.to(roomid).emit('gameStateUpdate', gameState[roomid])
+  //     io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
+  //     socket.emit('clearCanvasBeforeGame')
+  //   }
+  // })
 
-  socket.on('roundTimer', ({ roomid }) => {
-    if (gameState[roomid]) {
-      gameState[roomid].setRoundTimer()
-      io.to(roomid).emit('roundTimerUpdate', gameState[roomid].roundTimer)
-      io.to(roomid).emit('gameStateUpdate', gameState[roomid])
-    }
-  })
+  // socket.on('roundTimer', ({ roomid }) => {
+  //   if (gameState[roomid]) {
+  //     gameState[roomid].setRoundTimer()
+  //     io.to(roomid).emit('roundTimerUpdate', gameState[roomid].roundTimer)
+  //     io.to(roomid).emit('gameStateUpdate', gameState[roomid])
+  //   }
+  // })
 
   socket.on('wordMatch', ({ roomid, socketId }) => {
     if (gameState[roomid]) {
-      gameState[roomid].calcPointsForUserOnMatch(socketId)
+      gameState[roomid].calcPointsForUserOnMatch(
+        socketId,
+        roundIntervals[roomid]
+      )
       io.to(roomid).emit('gameStateUpdate', gameState[roomid])
       io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
     }
@@ -134,7 +155,7 @@ const socketForDrawing = (socket) => {
 const socketForLeaving = (io, socket) => {
   socket.on('leftRoom', ({ roomid }) => {
     if (gameState[roomid]) {
-      gameState[roomid].removeUserFromRoom(socket.id)
+      gameState[roomid].removeUserFromRoom(socket.id, roundIntervals[roomid])
     }
     io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
     io.to(roomid).emit('gameStateUpdate', gameState[roomid])
@@ -146,7 +167,7 @@ const socketForLeaving = (io, socket) => {
     const [id, room] = Array.from(socket.rooms)
     if (room) {
       if (gameState[room]) {
-        gameState[room].removeUserFromRoom(id)
+        gameState[room].removeUserFromRoom(id, roundIntervals[room])
         io.to(room).emit('gameStateUpdate', gameState[room])
         io.to(room).emit('usersRoomUpdate', getUsersInRoom(gameState, room))
         io.emit('allRoomsQtyUpdate', gameState)
