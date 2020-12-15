@@ -22,13 +22,13 @@ export const RoomsPage = () => {
   }, [fetchRooms])
 
   const setCapacityCB = (rooms) => {
+    console.log('rooms', rooms)
     setGameRooms(rooms)
   }
 
   useEffect(() => {
-    socket.on('roomsAndUsers', setCapacityCB)
-    socket.emit('getRoomCapacity')
     socket.on('allRoomsQtyUpdate', setCapacityCB)
+    socket.emit('getRoomCapacity')
 
     const socketCopy = socket
 
@@ -49,9 +49,7 @@ export const RoomsPage = () => {
           <RoomCard
             key={room._id}
             room={room}
-            capacity={
-              (gameRooms[room._id] && gameRooms[room._id].users.length) || 0
-            }
+            capacity={gameRooms[room._id]?.users.length || 0}
           />
         ))}
       </ul>

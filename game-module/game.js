@@ -1,10 +1,11 @@
 const { revealWord } = require('../utils/utils')
-const roomsAndUsers = {}
+const EventEmitter = require('events')
+const gameState = {}
 
-class Game {
-  constructor(roomid, user) {
+class GameRoom {
+  constructor(roomid) {
     this.roomid = roomid
-    this.users = [user]
+    this.users = []
     this.activeUser = null
     this.word = null
     this.wordToShow = null
@@ -13,12 +14,15 @@ class Game {
     this.round = 0
     this.roundFinished = false
     this.gameFinished = false
-    this.roundTimer = 30
     this.countMatch = 0
+    this.roundTimer = 30
+    this.wordSelectionTimer = null
+    this.roundResultsTimer = null
+    this.gameResultsTimer = null
   }
 
   setActiveUser(socketId) {
-    this.room.activeUser = socketId
+    this.activeUser = socketId
   }
 
   setWord(word) {
@@ -39,7 +43,7 @@ class Game {
 
   addUser(user) {
     this.users.push(user)
-    if (this.users.length === 1) this.activeUser = this.users[0]
+    if (this.users.length === 1) this.setActiveUser(this.users[0])
     if (this.users.length === 2) this.startGame()
   }
 
@@ -54,6 +58,9 @@ class Game {
     this.gameFinished = false
     this.roundTimer = 30
     this.countMatch = 0
+    this.wordSelectionTimer = null
+    this.roundResultsTimer = null
+    this.gameResultsTimer = null
   }
 
   removeUserFromRoom(socketId) {
@@ -64,12 +71,12 @@ class Game {
       this.users = this.users.filter(
         (user) => Object.keys(user)[0] !== socketId
       )
-      this.users.forEach((user) => {
-        Object.values(user)[0].points = 0
-        Object.values(user)[0].roundPoints = 0
-        Object.values(user)[0].match = false
-      })
-      this.isPlaying = false
+      if (this.users[0]) {
+        this.users[0].points = 0
+        this.users[0].roundPoints = 0
+        this.users[0].match = false
+      }
+
       this.setDefaultGame()
       this.activeUser = this.users[0]
     } else {
@@ -160,7 +167,7 @@ class Game {
       else if (this.countMatch === 1) points += 20
       else if (this.countMatch === 2) points += 10
       if (this.roundTimer > 15 && this.roundTimer <= 30) points *= 0.9
-      if (this.roundTimer <= 15) points *= 0.8
+      if (this.roundTimer <= 15) points *= 0.7
       points = Math.floor(points)
       this.countMatch++
       user[socketId].points = user[socketId].points + points
@@ -188,9 +195,9 @@ class Game {
 }
 
 const createGame = (roomid, user) => {
-  const game = new Game(roomid, user)
-  game.activeUser = user
+  const game = new GameRoom(roomid)
+  game.addUser(user)
   return game
 }
 
-module.exports = { roomsAndUsers, createGame }
+module.exports = { gameState, createGame }

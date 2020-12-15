@@ -15,7 +15,7 @@
     "react-resize-detector": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
-    "socket.io-client": "^2.3.1",
+    "socket.io-client": "^3.0.4",
     "styled-components": "^5.2.1"
   },
   "scripts": {
@@ -27,7 +27,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "proxy": "http://localhost:5000",
+  "proxy":  "http://localhost:5000" ,
   "browserslist": {
     "production": [
       ">0.2%",

@@ -3,12 +3,11 @@ const http = require('http')
 const path = require('path')
 const config = require('config')
 const mongoose = require('mongoose')
-const socket = require('socket.io')
 const socketConsumer = require('./socket')
 
 const app = express()
 const httpServer = http.createServer(app)
-const io = socket(httpServer)
+const io = require('socket.io')(httpServer)
 
 app.use(express.json({ extended: true }))
 
