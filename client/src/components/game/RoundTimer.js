@@ -45,7 +45,6 @@ export const RoundTimer = () => {
   useEffect(() => {
     // const socketCopy = socket
     socket.on('testRound', (seconds) => {
-      console.log('seconds', seconds)
       setTimer(seconds)
     })
     return () => {

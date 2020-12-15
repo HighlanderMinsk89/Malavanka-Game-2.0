@@ -72,9 +72,10 @@ class GameRoom {
     if (this.users.length === 1) {
       this.users = []
       this.setDefaultGame()
+      this.isPlaying = false
+      this.roundFinished = false
       clearInterval(interval)
     } else if (this.users.length === 2) {
-      console.log('this.users.length', this.users.length)
       this.users = this.users.filter(
         (user) => Object.keys(user)[0] !== socketId
       )
@@ -89,12 +90,17 @@ class GameRoom {
       clearInterval(interval)
     } else {
       if (this.activeUser && Object.keys(this.activeUser)[0] === socketId) {
+        clearInterval(interval)
         const activeIdx = this.users.findIndex(
           (player) => player === this.activeUser
         )
-        activeIdx === this.users.length - 1
-          ? (this.activeUser = this.users[0])
-          : (this.activeUser = this.users[activeIdx + 1])
+
+        if (activeIdx === this.users.length - 1) {
+          this.activeUser = this.users[0]
+        } else {
+          this.activeUser = this.users[activeIdx + 1]
+        }
+        this.nextPlayer(false)
       }
       this.users = this.users.filter(
         (user) => Object.keys(user)[0] !== socketId
