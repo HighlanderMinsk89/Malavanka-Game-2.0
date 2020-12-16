@@ -2,6 +2,7 @@ const { revealWord } = require('../utils/utils')
 const EventEmitter = require('events')
 const gameState = {}
 
+const gameEmitter = new EventEmitter()
 class GameRoom {
   constructor(roomid) {
     this.roomid = roomid
@@ -17,7 +18,6 @@ class GameRoom {
     this.gameFinished = false
     this.countMatch = 0
     this.roundTimer = null
-    this.roundInterval = null
     this.wordSelectionTimer = null
     this.roundResultsTimer = null
     this.gameResultsTimer = null
@@ -31,6 +31,10 @@ class GameRoom {
     this.word = word
     this.word.word = this.word.word.toUpperCase()
     this.wordToShow = this.word.word.replace(/./gi, '_')
+  }
+
+  decrementTimer(timer) {
+    --this[timer]
   }
 
   setRoundTimer() {
@@ -67,13 +71,15 @@ class GameRoom {
     this.gameResultsTimer = null
   }
 
-  removeUserFromRoom(socketId, interval) {
+  removeUserFromRoom(socketId, intervals) {
     if (this.users.length === 1) {
       this.users = []
       this.setDefaultGame()
       this.isPlaying = false
       this.roundFinished = false
-      clearInterval(interval)
+      intervals.forEach((int) => {
+        clearInterval(int)
+      })
     } else if (this.users.length === 2) {
       this.users = this.users.filter(
         (user) => Object.keys(user)[0] !== socketId
@@ -86,20 +92,17 @@ class GameRoom {
       this.isPlaying = false
       this.setDefaultGame()
       this.activeUser = this.users[0]
-      clearInterval(interval)
+      intervals.forEach((int) => {
+        clearInterval(int)
+      })
     } else {
       if (this.activeUser && Object.keys(this.activeUser)[0] === socketId) {
-        clearInterval(interval)
+        clearInterval(intervals[0])
+        clearInterval(intervals[1])
         const activeIdx = this.users.findIndex(
           (player) => player === this.activeUser
         )
-
-        if (activeIdx === this.users.length - 1) {
-          this.activeUser = this.users[0]
-        } else {
-          this.activeUser = this.users[activeIdx + 1]
-        }
-        this.nextPlayer(false)
+        this.nextPlayer(false, activeIdx)
       }
       this.users = this.users.filter(
         (user) => Object.keys(user)[0] !== socketId
@@ -138,36 +141,52 @@ class GameRoom {
     const active = Object.values(this.activeUser)[0]
     active.isTurnToDraw = true
     Object.values(this.users[0]).isTurnToDraw = true
+    const activeUserSocketId = Object.keys(this.activeUser)[0]
+    gameEmitter.emit('activateSelectWordModal', {
+      room: this,
+      roomid: this.roomid,
+      socketId: activeUserSocketId,
+    })
   }
 
-  nextPlayer(skipped) {
-    this.word = null
-    this.wordToShow = null
-    // bonus for active
+  nextPlayer(skipped, activeIdxLeft) {
+    //* bonus for active
     if (this.countMatch === this.users.length - 1) {
       Object.values(this.activeUser)[0].points += this.roundTimer
       Object.values(this.activeUser)[0].roundPoints += this.roundTimer
     }
+
+    //* reset
+    this.word = null
+    this.wordToShow = null
     this.users.forEach((user) => {
       Object.values(user)[0].match = false
     })
-    // this.roundTimer = 30
     this.countMatch = 0
-    const activeIdx = this.users.findIndex(
-      (player) => player === this.activeUser
-    )
+
+    //* set new active player
+    const activeIdx =
+      activeIdxLeft ||
+      this.users.findIndex((player) => player === this.activeUser)
+    //* penalty points for not picking a word
     if (skipped) {
       Object.values(this.activeUser)[0].points -= 10
       Object.values(this.activeUser)[0].roundPoints -= 10
     }
     if (activeIdx === this.users.length - 1) {
       this.roundFinished = true
+      gameEmitter.emit('activateRoundResultsTimer', {
+        room: this,
+        roomid: this.roomid,
+      })
     } else {
-      this.activeUser = this.users[activeIdx + 1]
-
-      Object.values(this.users[activeIdx])[0].isTurnToDraw = false
-      Object.values(this.users[activeIdx + 1])[0].isTurnToDraw = true
-      this.activeUser.isTurnToDraw = true
+      this.activeUser = this.users[activeIdxLeft || activeIdx + 1]
+      const activeUserSocketId = Object.keys(this.activeUser)[0]
+      gameEmitter.emit('activateSelectWordModal', {
+        room: this,
+        roomid: this.roomid,
+        socketId: activeUserSocketId,
+      })
     }
   }
 
@@ -194,8 +213,13 @@ class GameRoom {
   }
 
   nextRound(round) {
-    if (round === 3) this.finishGame()
-    else {
+    if (round === 3) {
+      this.finishGame()
+      gameEmitter.emit('activateGameResultsTimer', {
+        room: this,
+        roomid: this.roomid,
+      })
+    } else {
       this.startRound()
     }
   }
@@ -206,7 +230,13 @@ class GameRoom {
     this.wordToShow = null
     this.gameFinished = true
     this.roundFinished = true
-    // this.isPlaying = false
+    this.allChoseCorrectWord = false
+    this.round = 0
+    this.countMatch = 0
+    this.roundTimer = null
+    this.wordSelectionTimer = null
+    this.roundResultsTimer = null
+    this.gameResultsTimer = null
   }
 }
 
@@ -216,4 +246,4 @@ const createGame = (roomid, user) => {
   return game
 }
 
-module.exports = { gameState, createGame }
+module.exports = { gameState, createGame, gameEmitter }

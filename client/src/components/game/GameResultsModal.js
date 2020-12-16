@@ -4,19 +4,16 @@ import { GameContext } from '../../context/gameContext'
 import { GameResultsTable } from './GameResultsTable'
 
 export const GameResultsModal = () => {
-  const [timer, setTimer] = useState(15)
-  const { socket, yourTurn, roomid, gameState } = useContext(GameContext)
+  const { socket, gameState } = useContext(GameContext)
+  const [timer, setTimer] = useState(gameState.gameResultsTimer)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (timer === 0 && yourTurn) {
-        socket.emit('newGame', roomid)
-      } else {
-        setTimer((seconds) => seconds - 1)
-      }
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [timer, roomid, socket, yourTurn])
+    socket.on('gameResultsTimer', (seconds) => {
+      setTimer(seconds)
+    })
+
+    return () => socket.removeAllListeners('gameResultsTimer')
+  }, [socket])
 
   return (
     <Modal
@@ -36,7 +33,7 @@ export const GameResultsModal = () => {
       <GameResultsTable gameState={gameState} />
       <Row>
         <Col>
-          <h4>New Game Starts in {timer} seconds...</h4>
+          <h4>New Game Starts in {timer}...</h4>
         </Col>
       </Row>
     </Modal>

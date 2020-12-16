@@ -4,19 +4,16 @@ import { GameContext } from '../../context/gameContext'
 import { RoundResultsTable } from './RoundResultsTable'
 
 export const RoundResultsModal = () => {
-  const [timer, setTimer] = useState(5)
-  const { socket, roomid, yourTurn, gameState } = useContext(GameContext)
+  const { socket, gameState } = useContext(GameContext)
+  const [timer, setTimer] = useState(gameState.roundResultsTimer)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (timer === 0 && yourTurn) {
-        socket.emit('nextRound', { roomid, round: gameState.round })
-      } else {
-        setTimer((seconds) => seconds - 1)
-      }
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [timer, roomid, socket, yourTurn, gameState.round])
+    socket.on('roundResultsTimer', (seconds) => {
+      setTimer(seconds)
+    })
+
+    return () => socket.removeAllListeners('roundResultsTimer')
+  }, [socket])
 
   return (
     <Modal

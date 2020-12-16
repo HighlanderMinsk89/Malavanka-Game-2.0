@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Modal } from 'react-materialize'
 import { Loader } from '../Loader'
 
 import styled, { keyframes } from 'styled-components/macro'
+import { GameContext } from '../../context/gameContext'
 
 const StyledSelectWordModal = styled.div`
   width: 100%;
@@ -160,21 +161,15 @@ export const WordModal = ({
   handleClickWordSelected,
   words,
   loading,
-  roomid,
   socket,
 }) => {
-  const [timer, setTimer] = useState(16)
+  const { gameState } = useContext(GameContext)
+  const [timer, setTimer] = useState(gameState.wordSelectionTimer)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (timer === 0) {
-        socket.emit('playerSkippedDrawing', roomid)
-      } else {
-        setTimer((seconds) => seconds - 1)
-      }
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [timer, socket, roomid])
+    socket.on('wordSelectionTimer', (seconds) => setTimer(seconds))
+    return () => socket.removeAllListeners('wordSelectionTimer')
+  }, [socket])
 
   if (loading) return <Loader />
 

@@ -1,7 +1,78 @@
-const { gameState, createGame } = require('./game-module/game')
+const { gameState, createGame, gameEmitter } = require('./game-module/game')
+let globalIo, globalSocket
+
 let roundIntervals = {}
+let roundResultsIntervals = {}
+let gameResultsIntervals = {}
+let wordSelectionIntervals = {}
+
+gameEmitter.on('activateRoundResultsTimer', ({ room, roomid }) => {
+  setRoundResultsInterval(room, roomid)
+})
+gameEmitter.on('activateGameResultsTimer', ({ room, roomid }) => {
+  setGameResultsInterval(room, roomid)
+})
+
+gameEmitter.on('activateSelectWordModal', ({ room, roomid, socketId }) => {
+  setWordSelectionTimer(room, roomid, socketId)
+})
+
+const setRoundResultsInterval = (room, roomid) => {
+  room.roundResultsTimer = 8
+  roundResultsIntervals[roomid] = setInterval(() => {
+    if (room.roundResultsTimer === 0) {
+      room.nextRound(room.round)
+      globalIo.to(roomid).emit('gameStateUpdate', room)
+      globalIo
+        .to(roomid)
+        .emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
+      globalSocket.emit('clearCanvasBeforeGame')
+      clearInterval(roundResultsIntervals[roomid])
+    } else {
+      room.decrementTimer('roundResultsTimer')
+      globalIo.to(roomid).emit('roundResultsTimer', room.roundResultsTimer)
+    }
+  }, 1000)
+}
+
+const setGameResultsInterval = (room, roomid) => {
+  room.gameResultsTimer = 12
+  gameResultsIntervals[roomid] = setInterval(() => {
+    if (room.gameResultsTimer === 0) {
+      room.startNewGame()
+      globalIo.to(roomid).emit('clearChat')
+      globalIo.to(roomid).emit('gameStateUpdate', room)
+      globalIo
+        .to(roomid)
+        .emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
+      clearInterval(gameResultsIntervals[roomid])
+    } else {
+      room.decrementTimer('gameResultsTimer')
+      globalIo.to(roomid).emit('gameResultsTimer', room.gameResultsTimer)
+    }
+  }, 1000)
+}
+
+const setWordSelectionTimer = (room, roomid, socketId) => {
+  room.wordSelectionTimer = 15
+  wordSelectionIntervals[roomid] = setInterval(() => {
+    if (room.wordSelectionTimer === 0) {
+      clearInterval(wordSelectionIntervals[roomid])
+      room.nextPlayer(true)
+      globalIo.to(roomid).emit('gameStateUpdate', room)
+      globalIo
+        .to(roomid)
+        .emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
+    } else {
+      console.log('(room.wordSelectionTimer', room.wordSelectionTimer)
+      room.decrementTimer('wordSelectionTimer')
+      globalIo.to(socketId).emit('wordSelectionTimer', room.wordSelectionTimer)
+    }
+  }, 1000)
+}
 
 const socketForGame = (io, socket) => {
+  // *controls timer when user is drawing
   const setRoundInterval = (room, roomid) => {
     room.roundTimer = 30
     roundIntervals[roomid] = setInterval(() => {
@@ -38,52 +109,11 @@ const socketForGame = (io, socket) => {
       gameState[roomid].setWord(selectedWord)
       socket.emit('clearCanvasBeforeGame')
 
+      clearInterval(wordSelectionIntervals[roomid])
       setRoundInterval(gameState[roomid], roomid)
       io.to(roomid).emit('gameStateUpdate', gameState[roomid])
     }
   })
-
-  socket.on('playerSkippedDrawing', (roomid) => {
-    if (gameState[roomid]) {
-      gameState[roomid].nextPlayer(true)
-      io.to(roomid).emit('gameStateUpdate', gameState[roomid])
-      io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
-      socket.emit('clearCanvasBeforeGame')
-    }
-  })
-
-  socket.on('nextRound', ({ roomid, round }) => {
-    if (gameState[roomid]) {
-      gameState[roomid].nextRound(round)
-      io.to(roomid).emit('gameStateUpdate', gameState[roomid])
-      io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
-      socket.emit('clearCanvasBeforeGame')
-    }
-  })
-  socket.on('newGame', (roomid) => {
-    if (gameState[roomid]) {
-      gameState[roomid].startNewGame()
-      io.to(roomid).emit('clearChat')
-      io.to(roomid).emit('gameStateUpdate', gameState[roomid])
-      io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
-    }
-  })
-  // socket.on('drawFinishedNextPlayer', (roomid) => {
-  //   if (gameState[roomid]) {
-  //     gameState[roomid].nextPlayer(false)
-  //     io.to(roomid).emit('gameStateUpdate', gameState[roomid])
-  //     io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
-  //     socket.emit('clearCanvasBeforeGame')
-  //   }
-  // })
-
-  // socket.on('roundTimer', ({ roomid }) => {
-  //   if (gameState[roomid]) {
-  //     gameState[roomid].setRoundTimer()
-  //     io.to(roomid).emit('roundTimerUpdate', gameState[roomid].roundTimer)
-  //     io.to(roomid).emit('gameStateUpdate', gameState[roomid])
-  //   }
-  // })
 
   socket.on('wordMatch', ({ roomid, socketId }) => {
     if (gameState[roomid]) {
@@ -170,7 +200,12 @@ const socketForDrawing = (socket) => {
 const socketForLeaving = (io, socket) => {
   socket.on('leftRoom', ({ roomid }) => {
     if (gameState[roomid]) {
-      gameState[roomid].removeUserFromRoom(socket.id, roundIntervals[roomid])
+      gameState[roomid].removeUserFromRoom(socket.id, [
+        roundIntervals[roomid],
+        wordSelectionIntervals[roomid],
+        roundResultsIntervals[roomid],
+        gameResultsIntervals[roomid],
+      ])
     }
     io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
     io.to(roomid).emit('gameStateUpdate', gameState[roomid])
@@ -182,7 +217,12 @@ const socketForLeaving = (io, socket) => {
     const [id, room] = Array.from(socket.rooms)
     if (room) {
       if (gameState[room]) {
-        gameState[room].removeUserFromRoom(id, roundIntervals[room])
+        gameState[room].removeUserFromRoom(id, [
+          roundIntervals[room],
+          wordSelectionIntervals[room],
+          roundResultsIntervals[room],
+          gameResultsIntervals[room],
+        ])
         io.to(room).emit('gameStateUpdate', gameState[room])
         io.to(room).emit('usersRoomUpdate', getUsersInRoom(gameState, room))
         io.emit('allRoomsQtyUpdate', gameState)
@@ -194,6 +234,8 @@ const socketForLeaving = (io, socket) => {
 module.exports = {
   start: (io) => {
     io.on('connection', (socket) => {
+      globalIo = io
+      globalSocket = socket
       socket.on('getId', () => {
         socket.emit('your id', socket.id)
       })
