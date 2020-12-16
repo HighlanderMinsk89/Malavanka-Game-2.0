@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Vollkorn&display=swap');
+
 html {
   box-sizing: border-box;
-  font-family: Open Sans;
+  font-family: 'Vollkorn', serif;
 }
 
 body {
