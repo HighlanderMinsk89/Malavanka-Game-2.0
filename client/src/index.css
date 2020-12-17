@@ -1,8 +1,16 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v7.0.29,
+* Autoprefixer: v9.7.6
+* Browsers: last 4 version
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Philosopher&family=Vollkorn&display=swap');
 
 html {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   font-family: 'Philosopher', sans-serif;
 }
 
@@ -20,9 +28,13 @@ body {
 
 @media only screen and (min-width: 1400px) {
   body {
+   display: -webkit-box;
+   display: -ms-flexbox;
    display: flex;
    /* flex-direction: column; */
-   justify-content: center;
+   -webkit-box-pack: center;
+       -ms-flex-pack: center;
+           justify-content: center;
   }
   #root {
 
@@ -37,38 +49,70 @@ body {
 #root {
   width: 100%;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .body-app {
   margin: 0 1rem 0 1rem;
-  flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 
 .game-room-c {
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .draw-cont {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 
 .canvas-chat-cont {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
   padding-bottom: 2rem;
 }
 
 .canvas-tools-cont {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  flex-basis: 75%;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-preferred-size: 75%;
+      flex-basis: 75%;
   max-height: calc(960px + 3.5em);
 }
 
@@ -78,18 +122,25 @@ body {
   max-height: 960px;
   background-color: rgba(150, 149, 149, 0.265);
   margin-top: 0.5em;
-  box-shadow: 1.5px 1.5px 1.5px #7e7f85;
+  -webkit-box-shadow: 1.5px 1.5px 1.5px #7e7f85;
+          box-shadow: 1.5px 1.5px 1.5px #7e7f85;
   
 
 }
 
 .canvas-cont {
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
   height: 100%;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .canvas-cont-info {
@@ -104,31 +155,45 @@ body {
 canvas {
   position: absolute;
   background-color: white !important;
-  align-self: center;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
 }
 
 .round-word {
   width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 @media(min-height: 1101px) {
   .canvas-chat-cont {
     height: 100% !important;
-    flex-basis: auto !important;
-    flex-grow: 1 !important;
+    -ms-flex-preferred-size: auto !important;
+        flex-basis: auto !important;
+    -webkit-box-flex: 1 !important;
+        -ms-flex-positive: 1 !important;
+            flex-grow: 1 !important;
   }
 
   .chat-container {
-    flex-basis: auto !important;
+    -ms-flex-preferred-size: auto !important;
+        flex-basis: auto !important;
   }
 }
 
 @media(min-width: 800px) and (max-height: 1100px) {
   .canvas-chat-cont {
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
     width: 100%;
     padding-bottom: 2em;
   }
@@ -138,10 +203,13 @@ canvas {
   }
   
   .chat-container {
-    flex-grow: 2 !important;
+    -webkit-box-flex: 2 !important;
+        -ms-flex-positive: 2 !important;
+            flex-grow: 2 !important;
     margin-top: 0 !important;
     margin-left: 1rem;
-    flex-basis: 25% !important;
+    -ms-flex-preferred-size: 25% !important;
+        flex-basis: 25% !important;
 
   }
 }
@@ -161,12 +229,17 @@ canvas {
     top: 0
   }
   .canvas-tools-cont {
-    flex-grow: 0 !important;
-    flex-basis: auto;
+    -webkit-box-flex: 0 !important;
+        -ms-flex-positive: 0 !important;
+            flex-grow: 0 !important;
+    -ms-flex-preferred-size: auto;
+        flex-basis: auto;
   }
   .chat-container {
     min-height: 80px !important;
-    flex-grow: 0 !important;
+    -webkit-box-flex: 0 !important;
+        -ms-flex-positive: 0 !important;
+            flex-grow: 0 !important;
   }
 
   html {
@@ -183,17 +256,25 @@ canvas {
 }
 
 .chat-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
   margin-top: 1rem; 
-  flex-direction: column;
+  -webkit-box-orient: vertical; 
+  -webkit-box-direction: normal; 
+      -ms-flex-direction: column; 
+          flex-direction: column;
   min-height: 100px;
   height: 250px;
-  flex-basis: 25%;
+  -ms-flex-preferred-size: 25%;
+      flex-basis: 25%;
 }
 
 
 .chat-form {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   margin-top: 0.5rem;
 }
@@ -207,7 +288,24 @@ canvas {
 }
 .chat-form >input:focus{
   border-bottom: 1.5px solid #EF233C !important;
-  box-shadow: 0 2px 0 0 #EF233C !important;
+  -webkit-box-shadow: 0 2px 0 0 #EF233C !important;
+          box-shadow: 0 2px 0 0 #EF233C !important;
+}
+.chat-form >input::-webkit-input-placeholder{
+  color: #2B2D42 !important;
+ opacity: 0.7;
+}
+.chat-form >input::-moz-placeholder{
+  color: #2B2D42 !important;
+ opacity: 0.7;
+}
+.chat-form >input:-ms-input-placeholder{
+  color: #2B2D42 !important;
+ opacity: 0.7;
+}
+.chat-form >input::-ms-input-placeholder{
+  color: #2B2D42 !important;
+ opacity: 0.7;
 }
 .chat-form >input::placeholder{
   color: #2B2D42 !important;
@@ -249,9 +347,15 @@ canvas {
 
 
 .forms-cont {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
-  align-items: stretch;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
 }
 
 .auth-tile {
@@ -261,7 +365,8 @@ canvas {
 
 .input-field input:not(.browser-default):focus:not([readonly]) {
   color: rgb(0, 0, 0);
-  box-shadow: 0 1px 0 0 black;
+  -webkit-box-shadow: 0 1px 0 0 black;
+          box-shadow: 0 1px 0 0 black;
   border-bottom: 1px solid black;
 }
 
@@ -271,16 +376,31 @@ canvas {
 
 .card {
   height: 100%; 
+  display: -webkit-box; 
+  display: -ms-flexbox; 
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .btn-form {
-  align-self: flex-start;
-  flex-grow: 1;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
 }
 
 .btn-form button {
@@ -301,21 +421,30 @@ canvas {
 
 /* ROOMS LIST */
 .rooms-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .room-row-cont {
   border-radius: 5px;
-  box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
+  -webkit-box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
+          box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
   width: 70%;
   background-color: rgb(238, 238, 238);
   margin: 1rem;
 }
 
 .default-shadow {
-  box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
+  -webkit-box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
+          box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
 }
 
 .room-row-cont img {
@@ -323,24 +452,38 @@ canvas {
   height: 50px;
   border-radius: 50%;
   border: 1px solid black;
-  align-self: center;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
   margin: 1rem;
 }
 
 .room-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .room-row-info {
   margin: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
 }
 
 .room-row h5 {
-align-self: center;
+-ms-flex-item-align: center;
+    -ms-grid-row-align: center;
+    align-self: center;
 }
 
 .room-row-info div {
@@ -354,11 +497,20 @@ align-self: center;
 .secret-word {
   text-align: center;
   letter-spacing: 2rem;
+  width: -webkit-min-content;
+  width: -moz-min-content;
   width: min-content;
 }
 
 .blink-me {
-  animation: blinker 3s linear infinite
+  -webkit-animation: blinker 3s linear infinite;
+          animation: blinker 3s linear infinite
+}
+
+@-webkit-keyframes blinker {
+  50% {
+    opacity: 0.4;
+  }
 }
 
 @keyframes blinker {
