@@ -9,6 +9,8 @@ import { RoundResultsModal } from './RoundResultsModal'
 import { SelectWordModal } from './SelectWordModal'
 import { GameInfo } from './game_info/GameInfo'
 import { nameShortener } from '../../utils'
+import ReactResizeDetector from 'react-resize-detector'
+import { useRef } from 'react'
 
 export const GameMain = ({ socket, roomid }) => {
   const [gameState, setGameState] = useState({})
@@ -19,6 +21,8 @@ export const GameMain = ({ socket, roomid }) => {
     activeUserName = nameShortener(
       Object.values(gameState.activeUser)[0].userName
     )
+
+  const canvasChatResize = useRef()
 
   useEffect(() => {
     const callback = (newState) => {
@@ -51,17 +55,28 @@ export const GameMain = ({ socket, roomid }) => {
         {gameState.gameFinished ? <GameResultsModal /> : null}
         <div className='draw-cont'>
           <RoomUsers />
-          <div className='canvas-chat-cont'>
-            <CanvasMain
-              socket={socket}
-              yourTurn={yourTurn}
-              isPlaying={gameState.isPlaying}
-              word={gameState.word}
-              isRoundFinished={gameState.roundFinished}
-              activeUserName={activeUserName}
-            />
-            <Chat />
-          </div>
+          <ReactResizeDetector
+            handleWidth
+            handleHeight
+            targetRef={canvasChatResize}
+            skipOnMount={true}
+            refreshMode='throttle'
+            refreshRate={10}
+          >
+            {({ width, height }) => (
+              <div className='canvas-chat-cont' ref={canvasChatResize}>
+                <CanvasMain
+                  socket={socket}
+                  yourTurn={yourTurn}
+                  isPlaying={gameState.isPlaying}
+                  word={gameState.word}
+                  isRoundFinished={gameState.roundFinished}
+                  activeUserName={activeUserName}
+                />
+                <Chat contH={height} />
+              </div>
+            )}
+          </ReactResizeDetector>
         </div>
       </div>
     </GameContext.Provider>

@@ -68,7 +68,7 @@ export const GameInfo = ({ gameState, yourTurn }) => {
     <StyledGameInfo>
       {!gameState.isPlaying ? (
         <WaitingForUsers className='blink-me'>
-          <p>Waiting for other users...</p>
+          <p>Чакаем, каб хтосьці далучыўся...</p>
         </WaitingForUsers>
       ) : (
         <div style={{ position: 'relative' }}>

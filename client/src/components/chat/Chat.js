@@ -4,8 +4,10 @@ import { AuthContext } from '../../context/authContext'
 import { GameContext } from '../../context/gameContext'
 import { ChatBox } from './ChatBox'
 import { StyledButton } from '../shared/Button'
+import { useRef } from 'react'
+import { body } from 'express-validator'
 
-export const Chat = () => {
+export const Chat = ({ contH }) => {
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
 
@@ -19,6 +21,21 @@ export const Chat = () => {
     yourTurn = socket.id === Object.keys(gameState.activeUser)[0]
   }
 
+  const chatContainerRef = useRef()
+
+  useEffect(() => {
+    const body = document.getElementsByTagName('body')[0]
+    const bodyH = +window
+      .getComputedStyle(body, null)
+      .getPropertyValue('height')
+      .slice(0, -2)
+    console.log('bodyH', bodyH)
+    if (bodyH <= 1100) {
+      chatContainerRef.current.style.maxHeight = contH - 5 + 'px'
+      chatContainerRef.current.style.height = 'auto'
+    }
+  }, [contH])
+
   useEffect(() => {
     const socketCopy = socket
 
@@ -31,7 +48,7 @@ export const Chat = () => {
     socket.on('welcomeMessage', (message) => {
       const editedM = {
         message: `${message}, ${userName}!`,
-        userName: 'Malavanka',
+        userName: 'Маляванка',
       }
       setMessages((prevMess) => [...prevMess, editedM])
     })
@@ -39,7 +56,7 @@ export const Chat = () => {
     socket.on('userJoinedMessage', (message) => {
       setMessages((prevMess) => [
         ...prevMess,
-        { message, userName: 'Malavanka' },
+        { message, userName: 'Маляванка' },
       ])
     })
 
@@ -85,7 +102,7 @@ export const Chat = () => {
   }
 
   return (
-    <div className='chat-container'>
+    <div className='chat-container' ref={chatContainerRef}>
       <ChatBox messages={messages} socketId={socket.id} />
 
       <div className='chat-form'>

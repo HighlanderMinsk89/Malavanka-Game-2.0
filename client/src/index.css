@@ -136,13 +136,13 @@ canvas {
     height: 100% !important;
     max-height: none !important;
   }
-
+  
   .chat-container {
     flex-grow: 2 !important;
     margin-top: 0 !important;
     margin-left: 1rem;
     flex-basis: 25% !important;
-    height: 100% !important;
+
   }
 }
 
@@ -167,7 +167,6 @@ canvas {
   .chat-container {
     min-height: 80px !important;
     flex-grow: 0 !important;
-    /* flex-basis: 30% !important; */
   }
 
   html {
@@ -176,6 +175,12 @@ canvas {
 }
 
 /* CHAT */
+
+@media(min-height: 1101px) {
+  .chat-container {
+    height: 250px !important;
+  }
+}
 
 .chat-container {
   display: flex;

@@ -19,7 +19,11 @@ const ChatMessageWrapper = styled.div`
   width: auto;
   display: flex;
   justify-content: ${(props) =>
-    props.correct ? 'center' : props.yourMessage ? 'flex-end' : 'flex-start'};
+    props.correct || props.reveal
+      ? 'center'
+      : props.yourMessage
+      ? 'flex-end'
+      : 'flex-start'};
 `
 
 const StyledChatMessage = styled.div`
@@ -32,14 +36,14 @@ const StyledChatMessage = styled.div`
     props.correct ? props.theme.green : props.theme.white};
 
   ${(props) =>
-    props.userName === 'Malavanka'
+    props.userName === 'Маляванка'
       ? css`
           background-color: #ffb703;
           color: ${(props) => props.theme.darkBlue};
         `
       : null}
 
-  width: ${(props) => (props.correct ? '100%' : 'fit-content')};
+  width: ${(props) => (props.correct || props.reveal ? '100%' : 'fit-content')};
   & p {
     margin: 0;
     margin-left: 0.5em;
@@ -48,17 +52,19 @@ const StyledChatMessage = styled.div`
   & p em {
     padding-right: 0.3em;
     color: ${(props) =>
-      props.correct && props.userName !== 'Malavanka'
+      props.correct && props.userName !== 'Маляванка'
         ? props.theme.white
         : props.theme.brightRed};
   }
 `
 
-const ChatMessage = ({ userName, message, correct, yourMessage }) => {
+const ChatMessage = ({ userName, message, correct, yourMessage, reveal }) => {
   return (
-    <StyledChatMessage correct={correct} userName={userName}>
+    <StyledChatMessage correct={correct} userName={userName} reveal={reveal}>
       {correct ? (
-        <p>{`${yourMessage ? 'YOU' : userName} GUESSED THE WORD!`}</p>
+        <p>{`${
+          yourMessage ? 'ВЫ АДГАДАЛІ СЛОВА!' : `${userName} АДГАДАЎ(ЛА) СЛОВА!`
+        }`}</p>
       ) : (
         <p>
           <em>{userName}: </em>
@@ -92,12 +98,14 @@ export const ChatBox = ({ messages, socketId }) => {
               key={idx}
               yourMessage={yourMessage}
               correct={body.correct}
+              reveal={body.reveal}
             >
               <ChatMessage
                 correct={body.correct}
                 userName={nameShortener(body.userName)}
                 message={body.message}
                 yourMessage={yourMessage}
+                reveal={body.reveal}
               />
             </ChatMessageWrapper>
           )

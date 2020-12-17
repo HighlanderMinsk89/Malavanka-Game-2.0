@@ -64,7 +64,6 @@ const setWordSelectionTimer = (room, roomid, socketId) => {
         .to(roomid)
         .emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
     } else {
-      console.log('(room.wordSelectionTimer', room.wordSelectionTimer)
       room.decrementTimer('wordSelectionTimer')
       globalIo.to(socketId).emit('wordSelectionTimer', room.wordSelectionTimer)
     }
@@ -77,10 +76,14 @@ const socketForGame = (io, socket) => {
     room.roundTimer = 30
     roundIntervals[roomid] = setInterval(() => {
       if (room.roundTimer === 0 || !room.isPlaying) {
+        const activeUserName = Object.values(room.activeUser)[0].userName || ''
+        console.log('activeUserName', activeUserName)
+
         const body = {
           roomid,
-          userName: 'Malavanka',
-          message: `Вы адгадвалі слова "${room.word.word}"`,
+          userName: 'Маляванка',
+          message: `${activeUserName} маляваў(ла) слова "${room.word.word}"`,
+          reveal: true,
         }
         io.to(roomid).emit('message', body)
 
@@ -154,10 +157,10 @@ const socketForChat = (io, socket) => {
       socket.emit('clearCanvasBeforeGame')
     }
 
-    socket.emit('welcomeMessage', 'Welcome to the chat')
+    socket.emit('welcomeMessage', 'Прывітанне')
     socket.broadcast
       .to(roomid)
-      .emit('userJoinedMessage', `${userName} has joined the chat`)
+      .emit('userJoinedMessage', `${userName} далучыўся да гульні`)
 
     io.to(roomid).emit('usersRoomUpdate', getUsersInRoom(gameState, roomid))
     io.emit('allRoomsQtyUpdate', gameState)

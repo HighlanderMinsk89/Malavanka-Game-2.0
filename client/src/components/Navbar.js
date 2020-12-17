@@ -78,41 +78,6 @@ export const Navbar = () => {
           </div>
         </div>
       </div>
-      {/* <StyledLink to='/'>
-          <StyledLogo>Маляванка</StyledLogo>
-        </StyledLink>
-        <div>
-          <StyledLink to='/scores'>Scores</StyledLink>
-          {isAuthenticated ? (
-            <StyledLink to='/' onClick={logout}>
-              Logout
-            </StyledLink>
-          ) : (
-            <StyledLink to='/auth'>Login / Register</StyledLink>
-          )}
-        </div> */}
     </StyledNavbar>
-
-    // <nav>
-    //   <div className='nav-wrapper red darken-2'>
-    //     <NavLink to='/' className='brand-logo'>
-    //       Malavanka
-    //     </NavLink>
-    //     <ul id='nav-mobile' className='right hide-on-med-and-down'>
-    //       <li>
-    //         <NavLink to='/scores'>Scores</NavLink>
-    //       </li>
-    //       <li>
-    //         {isAuthenticated ? (
-    //           <NavLink to='/' onClick={logout}>
-    //             Logout
-    //           </NavLink>
-    //         ) : (
-    //           <NavLink to='/auth'>Login / Register</NavLink>
-    //         )}
-    //       </li>
-    //     </ul>
-    //   </div>
-    // </nav>
   )
 }
