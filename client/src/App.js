@@ -15,7 +15,7 @@ const theme = {
   white: '#EDF2F4',
   brightRed: '#EF233C',
   red: '#D90429',
-  green: '#2d6a4f',
+  green: '#26c485',
   bigShadow: '4px 4px 15px #2B2D42',
   shadow: '1.5px 1.5px 1.5px #2B2D42',
 }

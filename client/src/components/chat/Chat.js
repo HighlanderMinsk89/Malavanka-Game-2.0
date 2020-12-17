@@ -35,7 +35,7 @@ export const Chat = () => {
       }
       setMessages((prevMess) => [...prevMess, editedM])
     })
-    //userJoined
+
     socket.on('userJoinedMessage', (message) => {
       setMessages((prevMess) => [
         ...prevMess,
@@ -59,6 +59,10 @@ export const Chat = () => {
     setMessage(e.target.value)
   }
 
+  const handleEnterPress = (e) => {
+    if (e.keyCode === 13) handleSendMessage()
+  }
+
   const handleSendMessage = () => {
     if (message.length) {
       let input = message
@@ -76,7 +80,6 @@ export const Chat = () => {
       }
 
       socket.emit('send message', body)
-
       setMessage('')
     }
   }
@@ -90,8 +93,9 @@ export const Chat = () => {
           disabled={yourTurn && gameState.isPlaying}
           value={message}
           type='text'
-          placeholder='Guess a word or send message'
+          placeholder='Адгадваць ды чаціцца тут'
           onChange={handleFormChange}
+          onKeyUp={handleEnterPress}
         />
         <StyledButton
           disabled={yourTurn && gameState.isPlaying}

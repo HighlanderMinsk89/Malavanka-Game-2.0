@@ -18,7 +18,6 @@ const lineWeight = [4, 10, 18, 28, 36]
 
 const ToolsContainer = styled.div`
   display: flex;
-  margin-bottom: 0.5rem;
   align-items: center;
 
   & button {

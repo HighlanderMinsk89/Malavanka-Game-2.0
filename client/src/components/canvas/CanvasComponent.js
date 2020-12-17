@@ -85,12 +85,19 @@ export const CanvasComponent = ({
       .getComputedStyle(wrapperCont, null)
       .getPropertyValue('height')
       .slice(0, -2)
-    const computedH = contHeight || wrapperContH
-    let computedW = contWidth
+    const wrapperContW = +window
+      .getComputedStyle(wrapperCont, null)
+      .getPropertyValue('width')
+      .slice(0, -2)
+    let computedH = contHeight || wrapperContH
+    let computedW = contWidth || wrapperContW
 
-    if (computedH < 840) {
+    if (computedH / computedW > 0.7) {
+      computedH = computedW * 0.7
+    } else {
       computedW = computedH / 0.7
     }
+
     canvasRef.current.style.width = computedW + 'px'
     canvasRef.current.style.height = computedH + 'px'
     canvasRef.current.width = computedW * 2
