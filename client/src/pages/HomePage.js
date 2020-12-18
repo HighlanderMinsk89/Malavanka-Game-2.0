@@ -7,7 +7,7 @@ export const HomePage = () => {
   const { isAuthenticated } = useContext(AuthContext)
   return (
     <div>
-      <h1>Welcome to Malavanka</h1>
+      <h1>Вас вітае Маляванка!</h1>
       <button
         className='btn btn-large red'
         onClick={() =>

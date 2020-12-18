@@ -74,7 +74,7 @@ export const GameInfo = ({ gameState, yourTurn }) => {
         <div style={{ position: 'relative' }}>
           {gameState.round !== 0 ? (
             <RoundInfo>
-              <p>Round {gameState?.round}</p>
+              <p>Раунд {gameState?.round}</p>
             </RoundInfo>
           ) : null}
 

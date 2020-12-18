@@ -1,11 +1,32 @@
 import React, { Fragment, useMemo } from 'react'
-import { Col, Row } from 'react-materialize'
+import styled from 'styled-components/macro'
+import { nameShortener } from '../../utils'
 
-export const RoundResultsTable = ({ gameState }) => {
+export const TableRow = styled.div`
+  width: 100%;
+  background-color: ${(props) => props.theme.darkBlue};
+  margin-bottom: 0.3em;
+  padding: 0 1em;
+  display: flex;
+  justify-content: space-between;
+
+  & p {
+    font-size: 1.5em;
+    margin: 0;
+    padding: 0.2em;
+    line-height: 100%;
+    color: ${(props) =>
+      props.yourName ? props.theme.brightRed : props.theme.white};
+  }
+`
+
+export const RoundResultsTable = ({ gameState, socket }) => {
   const getRoundResults = (gameState) => {
     if (gameState.users) {
       return gameState.users
-        .map((user) => Object.values(user)[0])
+        .map((user) => {
+          return { ...Object.values(user)[0], socketId: Object.keys(user)[0] }
+        })
         .sort((a, b) => b.roundPoints - a.roundPoints)
     }
     return []
@@ -17,14 +38,10 @@ export const RoundResultsTable = ({ gameState }) => {
     <Fragment>
       {memoResults.map((user, idx) => {
         return (
-          <Row key={idx}>
-            <Col m={6} s={6}>
-              <h3>{user.userName}</h3>
-            </Col>
-            <Col m={6} s={6}>
-              <h3>{user.roundPoints}</h3>
-            </Col>
-          </Row>
+          <TableRow key={idx} yourName={user.socketId === socket.id}>
+            <p>{nameShortener(user.userName)}</p>
+            <p>{user.roundPoints}</p>
+          </TableRow>
         )
       })}
     </Fragment>

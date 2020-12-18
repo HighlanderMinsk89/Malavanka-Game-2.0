@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Modal, Row, Col } from 'react-materialize'
 import { GameContext } from '../../context/gameContext'
 import { GameResultsTable } from './GameResultsTable'
+import {
+  ResultsInfoAndTimer,
+  ResultsModal,
+  ResultsModalWrapper,
+  StyledRoundResultsTable,
+} from './RoundResultsModal'
 
 export const GameResultsModal = () => {
   const { socket, gameState } = useContext(GameContext)
@@ -16,26 +21,18 @@ export const GameResultsModal = () => {
   }, [socket])
 
   return (
-    <Modal
-      className={'modal'}
-      header='GAME RESULTS'
-      id='modal1'
-      open={true}
-      actions={[]}
-      options={{
-        dismissible: false,
-        inDuration: 500,
-        outDuration: 250,
-        preventScrolling: true,
-        startingTop: '4%',
-      }}
-    >
-      <GameResultsTable gameState={gameState} />
-      <Row>
-        <Col>
-          <h4>New Game Starts in {timer}...</h4>
-        </Col>
-      </Row>
-    </Modal>
+    <ResultsModalWrapper>
+      <ResultsModal>
+        <ResultsInfoAndTimer>
+          <h5>Вынікі гульні:</h5>
+        </ResultsInfoAndTimer>
+        <StyledRoundResultsTable>
+          <GameResultsTable gameState={gameState} socket={socket} />
+        </StyledRoundResultsTable>
+        <ResultsInfoAndTimer>
+          <h5>{`Новая гульня пачнецца праз ${timer}`}</h5>
+        </ResultsInfoAndTimer>
+      </ResultsModal>
+    </ResultsModalWrapper>
   )
 }

@@ -29,7 +29,6 @@ export const Chat = ({ contH }) => {
       .getComputedStyle(body, null)
       .getPropertyValue('height')
       .slice(0, -2)
-    console.log('bodyH', bodyH)
     if (bodyH <= 1100) {
       chatContainerRef.current.style.maxHeight = contH - 5 + 'px'
       chatContainerRef.current.style.height = 'auto'

@@ -68,17 +68,19 @@ export const RoomUsers = () => {
       socketCopy.removeListener('usersRoomUpdate')
     }
   }, [setUsers, socket, roomid])
+
   return (
     <NicksChips>
       {users &&
         users.map((user, idx) => {
+          const activeUserId = Object.keys(gameState.activeUser)[0]
           return (
             <NickChipCont
               className='default-shadow'
               key={idx}
               chipColor={user.match}
             >
-              {user.isTurnToDraw && gameState.isPlaying ? (
+              {gameState.isPlaying && user.id === activeUserId ? (
                 <BrushActive>
                   <i className='material-icons blink-me'>brush</i>
                 </BrushActive>

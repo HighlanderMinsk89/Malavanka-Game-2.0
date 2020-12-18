@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { nameShortener } from '../../utils'
+import ReactResizeDetector from 'react-resize-detector'
 
 import { CanvasMain } from '../../components/canvas/CanvasMain'
 import { Chat } from '../chat/Chat'
@@ -8,9 +10,6 @@ import { GameResultsModal } from './GameResultsModal'
 import { RoundResultsModal } from './RoundResultsModal'
 import { SelectWordModal } from './SelectWordModal'
 import { GameInfo } from './game_info/GameInfo'
-import { nameShortener } from '../../utils'
-import ReactResizeDetector from 'react-resize-detector'
-import { useRef } from 'react'
 
 export const GameMain = ({ socket, roomid }) => {
   const [gameState, setGameState] = useState({})

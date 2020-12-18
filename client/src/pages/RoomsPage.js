@@ -42,7 +42,7 @@ export const RoomsPage = () => {
 
   return (
     <div>
-      <h1 className='center-align'>Select Room</h1>
+      <h1 className='center-align'>Абярыце пакой</h1>
       <ul className='rooms-container'>
         {rooms?.map((room) => (
           <RoomCard

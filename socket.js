@@ -77,7 +77,6 @@ const socketForGame = (io, socket) => {
     roundIntervals[roomid] = setInterval(() => {
       if (room.roundTimer === 0 || !room.isPlaying) {
         const activeUserName = Object.values(room.activeUser)[0].userName || ''
-        console.log('activeUserName', activeUserName)
 
         const body = {
           roomid,
@@ -253,6 +252,8 @@ module.exports = {
 
 function getUsersInRoom(gameStateObj, room) {
   if (gameState[room]) {
-    return gameStateObj[room].users.map((socket) => Object.values(socket)[0])
+    return gameStateObj[room].users.map((socket) => {
+      return { ...Object.values(socket)[0], id: Object.keys(socket)[0] }
+    })
   }
 }

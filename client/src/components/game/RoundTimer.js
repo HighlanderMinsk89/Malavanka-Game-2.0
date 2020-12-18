@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { GameContext } from '../../context/gameContext'
 
 const ProgressBar = styled.div`

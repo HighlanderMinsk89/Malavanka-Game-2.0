@@ -23,7 +23,7 @@ export default class RedrawStack {
 
   trackPath(offsetX, offsetY) {
     const line = this.stack[this.stack.length - 1]
-    line.path.push({ x: offsetX * 2, y: offsetY * 2 })
+    if (line) line.path.push({ x: offsetX * 2, y: offsetY * 2 })
   }
 
   getStack() {

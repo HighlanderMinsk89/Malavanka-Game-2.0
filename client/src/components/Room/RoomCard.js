@@ -22,13 +22,20 @@ export const RoomCard = ({ room, capacity }) => {
 
         <div className='room-row-info'>
           <div>
-            {capacity} {`user${capacity === 1 ? '' : 's'} online`}
+            {capacity}{' '}
+            {`гул${
+              capacity === 1
+                ? 'ец'
+                : capacity <= 4 && capacity !== 0
+                ? 'ьцы'
+                : 'ьцоў'
+            } анлайн`}
           </div>
           <button
             className='btn green darken-3'
             onClick={() => history.push(`/room/${room._id}`)}
           >
-            Join
+            Далучыцца
           </button>
         </div>
       </div>

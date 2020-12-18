@@ -27,7 +27,6 @@ const ChatMessageWrapper = styled.div`
 `
 
 const StyledChatMessage = styled.div`
-  /* box-shadow: ${(props) => props.theme.shadow}; */
   display: flex;
   justify-content: center;
   padding: 0.1em 0.2em;
