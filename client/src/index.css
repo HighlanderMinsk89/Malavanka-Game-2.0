@@ -423,75 +423,13 @@ canvas {
 
 
 /* ROOMS LIST */
-.rooms-container {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
 
-.room-row-cont {
-  border-radius: 5px;
-  -webkit-box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
-          box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
-  width: 70%;
-  background-color: rgb(238, 238, 238);
-  margin: 1rem;
-}
 
 .default-shadow {
   -webkit-box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
           box-shadow:1.5px 1.5px 1.5px rgb(126, 120, 120);
 }
 
-.room-row-cont img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 1px solid black;
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  margin: 1rem;
-}
-
-.room-row {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-}
-
-.room-row-info {
-  margin: 1rem;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
-}
-
-.room-row h5 {
--ms-flex-item-align: center;
-    -ms-grid-row-align: center;
-    align-self: center;
-}
-
-.room-row-info div {
-  margin-bottom: 0.5rem;
-}
 
 /* CANVAS_________ */
 

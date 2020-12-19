@@ -190,7 +190,7 @@ export const WordModal = ({
       <StyledSelectWordModal>
         <StyledSelectWordInfoTimer timer={timer}>
           <p>Абярыце слова ды малюйце</p>
-          <p>{timer}</p>
+          <p>{timer > 0 ? timer : ''}</p>
         </StyledSelectWordInfoTimer>
         <StyledWordsContainer>
           {words?.map((word) => {

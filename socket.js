@@ -73,7 +73,7 @@ const setWordSelectionTimer = (room, roomid, socketId) => {
 const socketForGame = (io, socket) => {
   // *controls timer when user is drawing
   const setRoundInterval = (room, roomid) => {
-    room.roundTimer = 30
+    room.roundTimer = 70
     roundIntervals[roomid] = setInterval(() => {
       if (room.roundTimer === 0 || !room.isPlaying) {
         const activeUserName = Object.values(room.activeUser)[0].userName || ''

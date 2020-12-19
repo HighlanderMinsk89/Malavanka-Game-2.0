@@ -1,10 +1,10 @@
 import React, { Fragment, useMemo } from 'react'
 import styled from 'styled-components/macro'
-import { nameShortener } from '../../utils'
+import { nameShortener } from '../../../utils'
 
 export const TableRow = styled.div`
   width: 100%;
-  background-color: ${(props) => props.theme.darkBlue};
+  background-color: ${(props) => props.theme.white};
   margin-bottom: 0.3em;
   padding: 0 1em;
   display: flex;
@@ -16,7 +16,7 @@ export const TableRow = styled.div`
     padding: 0.2em;
     line-height: 100%;
     color: ${(props) =>
-      props.yourName ? props.theme.brightRed : props.theme.white};
+      props.yourName ? props.theme.brightRed : props.theme.darkBlue};
   }
 `
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { GameContext } from '../../context/gameContext'
+import { GameContext } from '../../../context/gameContext'
 import { GameResultsTable } from './GameResultsTable'
 import {
   ResultsInfoAndTimer,
@@ -30,7 +30,7 @@ export const GameResultsModal = () => {
           <GameResultsTable gameState={gameState} socket={socket} />
         </StyledRoundResultsTable>
         <ResultsInfoAndTimer>
-          <h5>{`Новая гульня пачнецца праз ${timer}`}</h5>
+          <h5>{`Новая гульня пачнецца праз ${timer > 0 ? timer : ''}...`}</h5>
         </ResultsInfoAndTimer>
       </ResultsModal>
     </ResultsModalWrapper>

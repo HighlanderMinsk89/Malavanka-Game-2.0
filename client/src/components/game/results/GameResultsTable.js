@@ -1,7 +1,7 @@
 import React, { useMemo, Fragment } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { TableRow } from './RoundResultsTable'
-import { nameShortener } from '../../utils'
+import { nameShortener } from '../../../utils'
 
 const GameResultsTableRow = styled(TableRow)`
   ${(props) =>

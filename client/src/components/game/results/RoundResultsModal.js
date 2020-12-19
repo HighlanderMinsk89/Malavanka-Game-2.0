@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components/macro'
 
-import { GameContext } from '../../context/gameContext'
+import { GameContext } from '../../../context/gameContext'
 import { RoundResultsTable } from './RoundResultsTable'
 
 export const ResultsModalWrapper = styled.div`
   position: fixed;
-  background-color: rgba(1, 5, 43, 0.8);
+  background-color: rgba(138, 142, 148, 0.5);
   z-index: 1;
   left: 0;
   top: 0;
@@ -21,7 +21,7 @@ export const ResultsModal = styled.div`
   min-width: 320px;
   width: 50vw;
   max-width: 800px;
-  background-color: ${(props) => props.theme.white};
+  background-color: ${(props) => props.theme.darkBlue};
   box-shadow: ${(props) => props.theme.bigShadow};
   top: 15%;
   padding: 0.5em;
@@ -39,7 +39,7 @@ export const ResultsInfoAndTimer = styled.div`
   & h5 {
     margin: 0;
     padding: 0.2em;
-    color: ${(props) => props.theme.darkBlue};
+    color: ${(props) => props.theme.white};
   }
 `
 
@@ -78,7 +78,7 @@ export const RoundResultsModal = () => {
       <ResultsModal>
         <ResultsInfoAndTimer justifyContent={true}>
           <h5>{`Вынікі ${roundName} тура:`}</h5>
-          <h5>{timer}</h5>
+          <h5>{timer > 0 ? timer : ''}</h5>
         </ResultsInfoAndTimer>
         <StyledRoundResultsTable>
           <RoundResultsTable

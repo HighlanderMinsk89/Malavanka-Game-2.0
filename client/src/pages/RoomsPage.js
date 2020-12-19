@@ -3,6 +3,21 @@ import { useHttp } from '../hooks/http.hook'
 import { Loader } from '../components/Loader'
 import { RoomCard } from '../components/Room/RoomCard'
 import { SocketContext } from '../context/socketContext'
+import styled from 'styled-components/macro'
+
+const StyledRoomsPage = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`
+
+const RoomsContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+`
 
 export const RoomsPage = () => {
   const { request, loading } = useHttp()
@@ -41,9 +56,9 @@ export const RoomsPage = () => {
   }
 
   return (
-    <div>
-      <h1 className='center-align'>Абярыце пакой</h1>
-      <ul className='rooms-container'>
+    <StyledRoomsPage>
+      <h4>Калі ласка, абярыце пакой</h4>
+      <RoomsContainer>
         {rooms?.map((room) => (
           <RoomCard
             key={room._id}
@@ -51,7 +66,7 @@ export const RoomsPage = () => {
             capacity={gameRooms[room._id]?.users.length || 0}
           />
         ))}
-      </ul>
-    </div>
+      </RoomsContainer>
+    </StyledRoomsPage>
   )
 }

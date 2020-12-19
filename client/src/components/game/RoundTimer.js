@@ -30,7 +30,7 @@ export const RoundTimer = () => {
 
   return (
     <ProgressBar>
-      <ProgressInner completed={`${(timer / 30) * 100}%`} />
+      <ProgressInner completed={`${(timer / 70) * 100}%`} />
     </ProgressBar>
   )
 }
