@@ -118,8 +118,6 @@ export const RoomCard = ({ room, capacity }) => {
   const { loading } = useHttp()
   if (loading) return <Loader />
 
-  console.log('room', room)
-
   return (
     <StyledRoomCard>
       <AuthorInfo>

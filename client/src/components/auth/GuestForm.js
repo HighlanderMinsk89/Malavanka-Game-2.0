@@ -3,6 +3,16 @@ import randomCryptoId from 'crypto-random-string'
 import { useHistory } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
 import { useMessage } from '../../hooks/message.hook'
+import styled from 'styled-components/macro'
+
+export const AuthFormWrapper = styled.div`
+  padding: 0.2em 1em;
+  width: 100%;
+
+  & button {
+    margin-bottom: 0.5em;
+  }
+`
 
 export const GuestForm = () => {
   const { login } = useContext(AuthContext)
@@ -18,61 +28,55 @@ export const GuestForm = () => {
   }
 
   const handleGuestLogin = () => {
-    if (!form.name.length) message('Please enter name')
-    login(
-      null,
-      null,
-      form.name,
-      form.location,
-      randomCryptoId({ length: 25, type: 'base64' })
-    )
+    if (!form.name.length) message('Увядзіце сваё імя')
+    else {
+      login(
+        null,
+        null,
+        form.name,
+        form.location,
+        randomCryptoId({ length: 25, type: 'base64' })
+      )
 
-    history.push('/selectroom')
+      history.push('/selectroom')
+    }
   }
 
   return (
-    <div className='row auth-tile'>
-      <div className='col s12 m12 card-cont'>
-        <div className='card red darken-3'>
-          <div className='card-content white-text'>
-            <span className='card-title center'>Play as Guest</span>
-          </div>
-          <div className='card-action'>
-            <div className='input-field '>
-              <input
-                id='nameG'
-                type='text'
-                name='name'
-                value={form.name}
-                onChange={handleChange}
-              />
-              <label htmlFor='nameG' className='white-text'>
-                Name *
-              </label>
-            </div>
-            <div className='input-field'>
-              <input
-                id='locationG'
-                type='text'
-                name='location'
-                value={form.location}
-                onChange={handleChange}
-              />
-              <label htmlFor='locationG' className='white-text'>
-                Location
-              </label>
-            </div>
-          </div>
-          <div className='btn-form'>
-            <button
-              className='btn white black-text waves-effect'
-              onClick={handleGuestLogin}
-            >
-              Play!
-            </button>
-          </div>
-        </div>
+    <AuthFormWrapper>
+      <div className='input-field '>
+        <input
+          id='nameG'
+          type='text'
+          name='name'
+          value={form.name}
+          onChange={handleChange}
+        />
+        <label htmlFor='nameG' className='white-text'>
+          Імя *
+        </label>
       </div>
-    </div>
+      <div className='input-field'>
+        <input
+          id='locationG'
+          type='text'
+          name='location'
+          value={form.location}
+          onChange={handleChange}
+        />
+        <label htmlFor='locationG' className='white-text'>
+          Адкуль Вы?
+        </label>
+      </div>
+
+      <div className='btn-form'>
+        <button
+          className='btn white black-text waves-effect'
+          onClick={handleGuestLogin}
+        >
+          Гуляць!
+        </button>
+      </div>
+    </AuthFormWrapper>
   )
 }

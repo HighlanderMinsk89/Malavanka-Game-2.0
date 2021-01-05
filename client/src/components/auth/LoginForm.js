@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
 import { useHttp } from '../../hooks/http.hook'
 import { useMessage } from '../../hooks/message.hook'
+import { AuthFormWrapper } from './GuestForm'
 
 export const LoginForm = () => {
   const { request, loading, error, clearError } = useHttp()
@@ -36,49 +37,41 @@ export const LoginForm = () => {
   }, [error, clearError, message])
 
   return (
-    <div className='row auth-tile'>
-      <div className='col s12 m12 card-cont'>
-        <div className='card red darken-3'>
-          <div className='card-content white-text'>
-            <span className='card-title center'>Login</span>
-          </div>
-          <div className='card-action'>
-            <div className='input-field '>
-              <input
-                id='email'
-                type='text'
-                value={form.email}
-                name='email'
-                onChange={handleChange}
-              />
-              <label htmlFor='email' className='white-text'>
-                Email *
-              </label>
-            </div>
-            <div className='input-field'>
-              <input
-                id='password'
-                type='password'
-                value={form.password}
-                name='password'
-                onChange={handleChange}
-              />
-              <label htmlFor='password' className='white-text'>
-                Password *
-              </label>
-            </div>
-          </div>
-          <div className='btn-form'>
-            <button
-              className='btn white black-text waves-effect'
-              onClick={login}
-              disabled={loading}
-            >
-              Log in
-            </button>
-          </div>
-        </div>
+    <AuthFormWrapper>
+      <div className='input-field '>
+        <input
+          id='email'
+          type='text'
+          value={form.email}
+          name='email'
+          onChange={handleChange}
+        />
+        <label htmlFor='email' className='white-text'>
+          Email *
+        </label>
       </div>
-    </div>
+      <div className='input-field'>
+        <input
+          id='password'
+          type='password'
+          value={form.password}
+          name='password'
+          onChange={handleChange}
+        />
+        <label htmlFor='password' className='white-text'>
+          Пароль *
+        </label>
+      </div>
+
+      <div className='btn-form'>
+        <button
+          className='btn white black-text waves-effect'
+          onClick={login}
+          disabled={loading}
+        >
+          Увайсці
+        </button>
+      </div>
+    </AuthFormWrapper>
   )
 }

@@ -5,7 +5,25 @@ import { GameContext } from '../../context/gameContext'
 import { ChatBox } from './ChatBox'
 import { StyledButton } from '../shared/Button'
 import { useRef } from 'react'
-import { body } from 'express-validator'
+import styled from 'styled-components/macro'
+
+const HelpersBelarusSymbols = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.3em;
+  & button {
+    margin-right: 0.3em;
+    background-color: ${(props) => props.theme.darkBlue};
+    color: ${(props) => props.theme.white};
+    padding: 0 0.7em;
+    font-size: 1.2em;
+  }
+
+  & button:hover {
+    cursor: pointer;
+    background-color: ${(props) => props.theme.red};
+  }
+`
 
 export const Chat = ({ contH }) => {
   const [messages, setMessages] = useState([])
@@ -75,6 +93,8 @@ export const Chat = ({ contH }) => {
     setMessage(e.target.value)
   }
 
+  const handleHelperSymbols = (symbol) => setMessage((prev) => prev + symbol)
+
   const handleEnterPress = (e) => {
     if (e.keyCode === 13) handleSendMessage()
   }
@@ -113,6 +133,13 @@ export const Chat = ({ contH }) => {
           onChange={handleFormChange}
           onKeyUp={handleEnterPress}
         />
+
+        <HelpersBelarusSymbols>
+          <button onClick={() => handleHelperSymbols('ў')}>ў</button>
+          <button onClick={() => handleHelperSymbols('і')}>і</button>
+          <button onClick={() => handleHelperSymbols("'")}>'</button>
+        </HelpersBelarusSymbols>
+
         <StyledButton
           disabled={yourTurn && gameState.isPlaying}
           onPress={handleSendMessage}

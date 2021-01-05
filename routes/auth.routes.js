@@ -23,7 +23,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           errors: errors.array(),
-          message: 'Incorrect registration data',
+          message: 'Няправільныя дадзеные',
         })
       }
 
@@ -32,7 +32,7 @@ router.post(
       if (candidate)
         return res
           .status(400)
-          .json({ message: 'User with such an email is already registered' })
+          .json({ message: 'Гулец з такім email ужо існуе' })
 
       const hashedPass = await bcrypt.hash(password, 12)
       const user = new User({ name, email, password: hashedPass, location })
@@ -62,18 +62,18 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           errors: errors.array(),
-          message: 'Incorrect login data',
+          message: 'Няправільныя дадзеные',
         })
       }
 
       const user = await User.findOne({ email })
       if (!user) {
-        return res.status(400).json({ message: 'Incorrect email or password' })
+        return res.status(400).json({ message: 'Няправільны email ці пароль' })
       }
 
       const isPassMatch = await bcrypt.compare(password, user.password)
       if (!isPassMatch) {
-        return res.status(400).json({ message: 'Incorrect email or password' })
+        return res.status(400).json({ message: 'Няправільны email ці пароль' })
       }
 
       const token = jwt.sign(

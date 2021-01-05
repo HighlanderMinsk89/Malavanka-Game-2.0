@@ -61,12 +61,6 @@ export const Navbar = () => {
           </div>
         </div>
         <div className='nav-group'>
-          {isAuthenticated ? (
-            <div className='nav-item'>
-              <StyledLink to='/scores'>Статыстыка</StyledLink>
-            </div>
-          ) : null}
-
           <div className='nav-item'>
             {isAuthenticated ? (
               <StyledLink to='/' onClick={logout}>
